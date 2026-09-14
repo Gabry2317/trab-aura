@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://bspnwas72g4u5"]
 
+[ext_resource type="Script" uid="uid://dnieghupyeep1" path="res://SCRIPT/player.gd" id="1_8gr2b"]
 [ext_resource type="Texture2D" uid="uid://c3whyq78sh2tc" path="res://sprite/Player/WND_trab/idle/WND_trab_idle000.png" id="1_bfour"]
 [ext_resource type="Texture2D" uid="uid://by24qgu42hunh" path="res://sprite/Player/WND_trab/idle/WND_trab_idle001.png" id="2_8gr2b"]
 [ext_resource type="Texture2D" uid="uid://c834leeej4vu6" path="res://sprite/Player/WND_trab/idle/WND_trab_idle002.png" id="3_vl8ci"]
@@ -199,9 +200,10 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fdm2o"]
-size = Vector2(53, 179)
+size = Vector2(53, 186)
 
 [node name="player" type="CharacterBody2D" unique_id=2012463177]
+script = ExtResource("1_8gr2b")
 
 [node name="sprite" type="AnimatedSprite2D" parent="." unique_id=1666249527]
 sprite_frames = SubResource("SpriteFrames_osicj")
@@ -210,5 +212,5 @@ frame_progress = 0.004962633
 speed_scale = 1.8
 
 [node name="collision" type="CollisionShape2D" parent="." unique_id=1003530983]
-position = Vector2(-3.5, 2.5)
+position = Vector2(-3.5, 6)
 shape = SubResource("RectangleShape2D_fdm2o")

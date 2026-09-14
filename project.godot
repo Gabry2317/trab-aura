@@ -11,6 +11,7 @@ config_version=5
 [application]
 
 config/name="Trab aura"
+run/main_scene="uid://bv5x0yh8vx8se"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://icon.svg"
 
@@ -25,6 +26,10 @@ window/stretch/aspect="expand"
 
 2d_render/layer_1="World"
 2d_render/layer_2="Player"
+2d_physics/layer_1="World"
+2d_navigation/layer_1="World"
+2d_physics/layer_2="Player"
+2d_navigation/layer_2="Player"
 
 [physics]
 
