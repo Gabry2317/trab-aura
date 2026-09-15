@@ -12546,17 +12546,14 @@ position = Vector2(537, 420)
 scale = Vector2(0.6, 0.6)
 script = ExtResource("5_n6hdu")
 
-[node name="TextureProgressBar" type="TextureProgressBar" parent="player" unique_id=1450235162 node_paths=PackedStringArray("player")]
-offset_left = -65.0
-offset_top = -145.0
-offset_right = 63.0
-offset_bottom = -81.0
-texture_under = ExtResource("7_i2t4f")
-texture_progress = ExtResource("8_8cye3")
-script = ExtResource("9_2orkt")
-player = NodePath("..")
-
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1735532043]
 position = Vector2(694, 348)
 zoom = Vector2(3, 3)
 script = ExtResource("3_f2txt")
+
+[node name="TextureProgressBar" type="TextureProgressBar" parent="." unique_id=1450235162]
+offset_right = 152.0
+offset_bottom = 60.0
+texture_under = ExtResource("7_i2t4f")
+texture_progress = ExtResource("8_8cye3")
+script = ExtResource("9_2orkt")

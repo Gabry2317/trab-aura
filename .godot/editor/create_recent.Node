@@ -1,7 +1,7 @@
+TextureProgressBar
 AnimatedSprite2D
 Node2D
 AnimationPlayer
-StateMachine
 ProgressBar
 Camera2D
 TileMap
