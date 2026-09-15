@@ -22,6 +22,10 @@ window/size/viewport_height=720
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 
+[global_group]
+
+players=""
+
 [layer_names]
 
 2d_render/layer_1="World"

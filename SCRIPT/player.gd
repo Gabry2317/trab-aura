@@ -1,41 +1,39 @@
-extends CharacterBody2D
 class_name Player
+extends CharacterBody2D
 
-signal healtChanged
+signal health_changed
 
-@export var maxhealth = 100
-@onready var currenthealth: int = maxhealth
+@export var max_health: int = 100
+var current_health: int = max_health:
+	set(value):
+		current_health = clampi(value, 0, max_health)
+		health_changed.emit()
 
-var isHurt: bool = false
+@onready var state_machine: StateMachine = $StateMachine
+@onready var animation: AnimationPlayer = $AnimationPlayer
 
-const SPEED = 300.0
-const JUMP_VELOCITY = -400.0
+@export var speed: float = 200.0
+@export var jump_velocity: float = -400.0
+@export var gravity: float = 980.0
 
+func _ready() -> void:
+	state_machine.init(self)
+
+func _process(delta: float) -> void:
+	state_machine.process_frame(delta)
 
 func _physics_process(delta: float) -> void:
-	# Add the gravity.
 	if not is_on_floor():
-		velocity += get_gravity() * delta
+		velocity.y += gravity * delta
 
-	# Handle jump.
 	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
-		velocity.y = JUMP_VELOCITY
-		jumphurt()
+		velocity.y = jump_velocity
 
-	# Get the input direction and handle the movement/deceleration.
 	var direction := Input.get_axis("ui_left", "ui_right")
-	if direction:
-		velocity.x = direction * SPEED
-	else:
-		velocity.x = move_toward(velocity.x, 0, SPEED)
+	velocity.x = direction * speed
 
 	move_and_slide()
+	state_machine.process_physics(delta)
 
-
-# danno
-func jumphurt():
-	currenthealth -= 10
-	if currenthealth < 0:
-		currenthealth = 0
-	isHurt = true
-	healtChanged.emit()
+func _input(event: InputEvent) -> void:
+	state_machine.process_input(event)
