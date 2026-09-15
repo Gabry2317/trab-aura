@@ -5,7 +5,6 @@
 [ext_resource type="PackedScene" uid="uid://bspnwas72g4u5" path="res://WND_trab.tscn" id="2_oi3di"]
 [ext_resource type="Texture2D" uid="uid://noyw04ayybjj" path="res://sprite/map/backdrop.png" id="3_1ainy"]
 [ext_resource type="Script" uid="uid://brag415xffcvp" path="res://SCRIPT/camera_2d.gd" id="3_f2txt"]
-[ext_resource type="Script" uid="uid://chdu580l1u8r2" path="res://SCRIPT/healt_bar.gd" id="4_0b4ue"]
 [ext_resource type="Script" uid="uid://dnieghupyeep1" path="res://SCRIPT/player.gd" id="5_n6hdu"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_0b4ue"]
@@ -12543,21 +12542,8 @@ layer_3/tile_data = PackedInt32Array(-655367, 1, 0, -589831, 1, 1, -524295, 1, 2
 position = Vector2(537, 420)
 scale = Vector2(0.6, 0.6)
 script = ExtResource("5_n6hdu")
-max_health = 100
-speed = 200.0
-jump_velocity = -400.0
-gravity = 980.0
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1735532043]
 position = Vector2(694, 348)
 zoom = Vector2(3, 3)
 script = ExtResource("3_f2txt")
-
-[node name="ProgressBar" type="ProgressBar" parent="." unique_id=198935066 node_paths=PackedStringArray("player")]
-offset_left = 485.0
-offset_top = 235.0
-offset_right = 541.0
-offset_bottom = 262.0
-value = 100.0
-script = ExtResource("4_0b4ue")
-player = NodePath("../player")

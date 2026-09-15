@@ -1,3 +1,4 @@
+AnimatedSprite2D
 Node2D
 AnimationPlayer
 StateMachine
@@ -6,5 +7,4 @@ Camera2D
 TileMap
 Node
 CollisionShape2D
-AnimatedSprite2D
 CharacterBody2D
