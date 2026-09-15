@@ -1,2 +1,4 @@
 res://level.tscn
-res://player.tscn
+res://SCRIPT/healt_bar.gd
+res://README.md
+res://SCRIPT/player.gd
