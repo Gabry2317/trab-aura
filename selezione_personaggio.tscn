@@ -3,20 +3,33 @@
 [ext_resource type="Texture2D" uid="uid://u2jnwnejiiyt" path="res://sprite/UI/character-selection-gender-v0-t5ikpt1sj45g1.png" id="1_tc7ei"]
 [ext_resource type="Texture2D" uid="uid://cdwtotglxuof8" path="res://sprite/Player/proppick/Iacobisio.png" id="2_nvn06"]
 [ext_resource type="Texture2D" uid="uid://cce4o7a7h5lwd" path="res://sprite/Player/proppick/WND_trab.png" id="3_3cjf2"]
+[ext_resource type="Texture2D" uid="uid://drocuhbd43aky" path="res://sprite/Player/proppick/WND_trab_bigprop.png" id="4_evl8s"]
+[ext_resource type="Texture2D" uid="uid://bugoywwy8red0" path="res://sprite/Player/proppick/IACOBISIO_bigprop.png" id="5_r7y7g"]
 
 [node name="selezione personaggio" type="Node2D" unique_id=472251201]
 
 [node name="CharacterSelectionGenderV0T5Ikpt1Sj45g1" type="Sprite2D" parent="." unique_id=689630001]
-position = Vector2(643.5, 359)
-scale = Vector2(2.0078125, 1.9944445)
+position = Vector2(640, 360.50003)
+scale = Vector2(0.76674634, 0.7683316)
 texture = ExtResource("1_tc7ei")
 
 [node name="Iacobisio" type="Sprite2D" parent="." unique_id=520023311]
-position = Vector2(332.46252, 296.0454)
-scale = Vector2(0.13163875, 0.12929851)
+z_index = -1
+position = Vector2(347.99997, 300)
+scale = Vector2(0.15353866, 0.1563558)
 texture = ExtResource("2_nvn06")
 
 [node name="WndTrab" type="Sprite2D" parent="." unique_id=1058421241]
-position = Vector2(539, 296.76498)
-scale = Vector2(0.132, 0.12854825)
+z_index = -1
+position = Vector2(545, 300)
+scale = Vector2(0.16072817, 0.15289573)
 texture = ExtResource("3_3cjf2")
+
+[node name="WndTrabBigprop" type="Sprite2D" parent="." unique_id=1561770992]
+position = Vector2(56, 422)
+texture = ExtResource("4_evl8s")
+
+[node name="IacobisioBigprop" type="Sprite2D" parent="." unique_id=777532634]
+position = Vector2(1151.2822, 421.28214)
+scale = Vector2(-1.2528716, 1.2528716)
+texture = ExtResource("5_r7y7g")
