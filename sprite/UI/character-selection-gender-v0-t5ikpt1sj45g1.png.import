@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://u2jnwnejiiyt"
-path="res://.godot/imported/character-selection-gender-v0-t5ikpt1sj45g1.png-300ce7f3bdf42e22f2b8cbc2442a3cd0.ctex"
+path="res://.godot/imported/character-selection-gender-v0-t5ikpt1sj45g1.png-a434231bf42b89d9df3878d1a45be526.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://scelta personaggio/sfondo/character-selection-gender-v0-t5ikpt1sj45g1.png"
-dest_files=["res://.godot/imported/character-selection-gender-v0-t5ikpt1sj45g1.png-300ce7f3bdf42e22f2b8cbc2442a3cd0.ctex"]
+source_file="res://sprite/UI/character-selection-gender-v0-t5ikpt1sj45g1.png"
+dest_files=["res://.godot/imported/character-selection-gender-v0-t5ikpt1sj45g1.png-a434231bf42b89d9df3878d1a45be526.ctex"]
 
 [params]
 

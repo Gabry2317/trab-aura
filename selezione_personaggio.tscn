@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://hiwvnyo0spfd"]
 
-[ext_resource type="Texture2D" uid="uid://u2jnwnejiiyt" path="res://scelta personaggio/sfondo/character-selection-gender-v0-t5ikpt1sj45g1.png" id="1_tc7ei"]
+[ext_resource type="Texture2D" uid="uid://u2jnwnejiiyt" path="res://sprite/UI/character-selection-gender-v0-t5ikpt1sj45g1.png" id="1_tc7ei"]
 
 [node name="selezione personaggio" type="Node2D" unique_id=472251201]
 
