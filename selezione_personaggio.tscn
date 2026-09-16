@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://bugoywwy8red0" path="res://sprite/Player/proppick/IACOBISIO_bigprop.png" id="5_r7y7g"]
 [ext_resource type="Script" uid="uid://cvib1fhk3dnf5" path="res://SCRIPT/personaggio 2.gd" id="6_r7y7g"]
 [ext_resource type="Script" uid="uid://cjvqr0jbl2gve" path="res://SCRIPT/play.gd" id="7_mlc5f"]
+[ext_resource type="Script" uid="uid://d02a5thx70g3t" path="res://SCRIPT/personaggio 3.gd" id="8_1yirc"]
 
 [node name="selezione personaggio" type="Node2D" unique_id=472251201]
 
@@ -51,3 +52,11 @@ offset_right = 632.0
 offset_bottom = 380.0
 flat = true
 script = ExtResource("7_mlc5f")
+
+[node name="nakakata" type="Button" parent="." unique_id=479731521]
+offset_left = 651.0
+offset_top = 203.0
+offset_right = 827.0
+offset_bottom = 383.0
+flat = true
+script = ExtResource("8_1yirc")

@@ -1,1 +1,5 @@
 res://WND_trab.tscn
+res://SCRIPT/hit.gd
+res://SCRIPT/personaggio 3.gd
+res://selezione_personaggio.tscn
+res://menu.tscn
