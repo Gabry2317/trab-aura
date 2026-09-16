@@ -1,2 +1,4 @@
-res://menu.tscn
-res://selezione_personaggio.tscn
+res://level.tscn
+res://SCRIPT/player.gd
+res://WND_trab.tscn
+res://SCRIPT/hit.gd

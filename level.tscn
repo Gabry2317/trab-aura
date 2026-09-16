@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://bspnwas72g4u5" path="res://WND_trab.tscn" id="2_oi3di"]
 [ext_resource type="Texture2D" uid="uid://noyw04ayybjj" path="res://sprite/map/backdrop.png" id="3_1ainy"]
 [ext_resource type="Script" uid="uid://brag415xffcvp" path="res://SCRIPT/camera_2d.gd" id="3_f2txt"]
-[ext_resource type="Script" uid="uid://dnieghupyeep1" path="res://SCRIPT/player.gd" id="5_n6hdu"]
+[ext_resource type="Script" uid="uid://c3csinjlkj8kl" path="res://SCRIPT/hit.gd" id="5_n6hdu"]
 [ext_resource type="AudioStream" uid="uid://cvxc68pr2ya60" path="res://sound/Music/Seve me (A7X).mp3" id="7_n6hdu"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_0b4ue"]
@@ -12555,5 +12555,5 @@ script = ExtResource("3_f2txt")
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=250258405]
 stream = SubResource("AudioStreamRandomizer_fdm2o")
-volume_db = -8.0
+volume_db = -14.0
 autoplay = true
