@@ -1,10 +1,11 @@
+Button
+TileMap
 TextureProgressBar
 AnimatedSprite2D
 Node2D
 AnimationPlayer
 ProgressBar
 Camera2D
-TileMap
 Node
 CollisionShape2D
 CharacterBody2D

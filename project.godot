@@ -11,9 +11,13 @@ config_version=5
 [application]
 
 config/name="Trab aura"
-run/main_scene="uid://bv5x0yh8vx8se"
+run/main_scene="uid://brf8uscrg5ast"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://icon.svg"
+
+[autoload]
+
+GameState="*uid://wqok4laf331x"
 
 [display]
 

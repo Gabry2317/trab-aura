@@ -13,7 +13,7 @@ const RUNSPEED = 250.0
 const JUMP_VELOCITY = -300.0
 
 # 0 = trab, 1 = iacopo
-const skin = 0
+var skin: int = GameState.selected_skin
 
 @onready var animated_sprite = $TRAB_Sprite2D
 @onready var animated_sprite2 = $Iaco_Spto
@@ -38,8 +38,9 @@ func _physics_process(delta: float) -> void:
 		velocity.y = JUMP_VELOCITY
 		jumphurt()
 
-	var is_running := Input.is_key_pressed(KEY_SHIFT)
-	var current_speed := RUNSPEED if is_running else SPEED
+	# skin 1 (iacopo) non può correre
+	var is_running: bool = Input.is_key_pressed(KEY_SHIFT) and skin != 1
+	var current_speed: float = RUNSPEED if is_running else SPEED
 
 	var direction := Input.get_axis("ui_left", "ui_right")
 

@@ -1,3 +1,6 @@
-res://level.tscn
 res://SCRIPT/player.gd
-res://SCRIPT/healt_bar.gd
+res://menu.tscn
+res://Scena 2/SCRIPT/play.gd
+res://WND_trab.tscn
+res://Scena 2/SCRIPT/Game_State.gd
+res://Scena 2/SCRIPT/personaggio 2.gd
