@@ -5,6 +5,8 @@
 [ext_resource type="Texture2D" uid="uid://cce4o7a7h5lwd" path="res://sprite/Player/proppick/WND_trab.png" id="3_3cjf2"]
 [ext_resource type="Texture2D" uid="uid://drocuhbd43aky" path="res://sprite/Player/proppick/WND_trab_bigprop.png" id="4_evl8s"]
 [ext_resource type="Texture2D" uid="uid://bugoywwy8red0" path="res://sprite/Player/proppick/IACOBISIO_bigprop.png" id="5_r7y7g"]
+[ext_resource type="Script" uid="uid://cvib1fhk3dnf5" path="res://SCRIPT/personaggio 2.gd" id="6_r7y7g"]
+[ext_resource type="Script" uid="uid://cjvqr0jbl2gve" path="res://SCRIPT/play.gd" id="7_mlc5f"]
 
 [node name="selezione personaggio" type="Node2D" unique_id=472251201]
 
@@ -33,3 +35,19 @@ texture = ExtResource("4_evl8s")
 position = Vector2(1151.2822, 421.28214)
 scale = Vector2(-1.2528716, 1.2528716)
 texture = ExtResource("5_r7y7g")
+
+[node name="bisio" type="Button" parent="." unique_id=1966492540]
+offset_left = 265.0
+offset_top = 201.0
+offset_right = 441.0
+offset_bottom = 381.0
+flat = true
+script = ExtResource("6_r7y7g")
+
+[node name="tommaso" type="Button" parent="." unique_id=328138598]
+offset_left = 456.0
+offset_top = 200.0
+offset_right = 632.0
+offset_bottom = 380.0
+flat = true
+script = ExtResource("7_mlc5f")
