@@ -1,15 +1,15 @@
 [gd_scene format=3 uid="uid://brf8uscrg5ast"]
 
-[ext_resource type="Texture2D" uid="uid://cyapv8pnvlmy6" path="res://sprite/UI/360_F_1977410715_JXhswK9bVHycE8kXWnPnSIJJOR2jrP4I.png" id="1_lti8b"]
-[ext_resource type="Script" uid="uid://cjvqr0jbl2gve" path="res://Scena 2/SCRIPT/play.gd" id="2_ouk20"]
-[ext_resource type="Script" uid="uid://cvib1fhk3dnf5" path="res://Scena 2/SCRIPT/personaggio 2.gd" id="3_mae5d"]
+[ext_resource type="Texture2D" uid="uid://cunan1qumpil6" path="res://sprite/UI/360_F_1977410715_JXhswK9bVHycE8kXWnPnSIJJOR2jrP4I (2).png" id="1_mae5d"]
+[ext_resource type="Script" uid="uid://cjvqr0jbl2gve" path="res://SCRIPT/play.gd" id="2_ouk20"]
+[ext_resource type="Script" uid="uid://cvib1fhk3dnf5" path="res://SCRIPT/personaggio 2.gd" id="3_mae5d"]
 
 [node name="Node2D" type="Node2D" unique_id=1696016993]
 
 [node name="foto" type="Sprite2D" parent="." unique_id=1523117616]
 position = Vector2(641, 361)
 scale = Vector2(1.8768328, 2)
-texture = ExtResource("1_lti8b")
+texture = ExtResource("1_mae5d")
 
 [node name="Button" type="Button" parent="." unique_id=1259408516]
 offset_left = 440.0

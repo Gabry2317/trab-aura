@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cunan1qumpil6"
-path="res://.godot/imported/360_F_1977410715_JXhswK9bVHycE8kXWnPnSIJJOR2jrP4I.png-10c666268cdb1ff551dbd19c52dd1f8f.ctex"
+uid="uid://cb41iujp3xxr3"
+path="res://.godot/imported/menu.png-9e775fbcfd3cd8922e0494e8d3eb86db.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Scena 2/sfondo/360_F_1977410715_JXhswK9bVHycE8kXWnPnSIJJOR2jrP4I.png"
-dest_files=["res://.godot/imported/360_F_1977410715_JXhswK9bVHycE8kXWnPnSIJJOR2jrP4I.png-10c666268cdb1ff551dbd19c52dd1f8f.ctex"]
+source_file="res://sprite/UI/menu.png"
+dest_files=["res://.godot/imported/menu.png-9e775fbcfd3cd8922e0494e8d3eb86db.ctex"]
 
 [params]
 
