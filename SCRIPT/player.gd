@@ -13,7 +13,7 @@ const RUNSPEED = 250.0
 const JUMP_VELOCITY = -300.0
 
 # 0 = trab, 1 = iacopo
-const skin = 0
+const skin = 1
 
 @onready var animated_sprite = $TRAB_Sprite2D
 @onready var animated_sprite2 = $Iaco_Spto

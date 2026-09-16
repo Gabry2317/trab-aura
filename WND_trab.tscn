@@ -119,6 +119,9 @@
 [ext_resource type="Texture2D" uid="uid://3utkq7p2hsng" path="res://sprite/Player/Iacobisio/walk/Bisio_walk020.png" id="92_q0umt"]
 [ext_resource type="Texture2D" uid="uid://d0aweg45kh3qg" path="res://sprite/Player/Iacobisio/walk/Bisio_walk021.png" id="93_kup7x"]
 [ext_resource type="Texture2D" uid="uid://ni1s7qdup608" path="res://sprite/Player/Iacobisio/walk/Bisio_walk022.png" id="94_hwvvw"]
+[ext_resource type="Texture2D" uid="uid://ciasphyiqgrvt" path="res://sprite/UI/bar_empty.png" id="120_avvbj"]
+[ext_resource type="Texture2D" uid="uid://im810oa7cjq3" path="res://sprite/UI/bar_full.png" id="121_jtuq4"]
+[ext_resource type="Script" uid="uid://chdu580l1u8r2" path="res://SCRIPT/healt_bar.gd" id="122_j50wv"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fdm2o"]
 size = Vector2(53, 186)
@@ -617,6 +620,16 @@ animations = [{
 position = Vector2(-3.5, 6)
 shape = SubResource("RectangleShape2D_fdm2o")
 
+[node name="TextureProgressBar" type="TextureProgressBar" parent="collision" unique_id=267345931 node_paths=PackedStringArray("player")]
+offset_left = -66.5
+offset_top = -139.0
+offset_right = 61.5
+offset_bottom = -75.0
+texture_under = ExtResource("120_avvbj")
+texture_progress = ExtResource("121_jtuq4")
+script = ExtResource("122_j50wv")
+player = NodePath("../..")
+
 [node name="TRAB_Sprite2D" type="AnimatedSprite2D" parent="." unique_id=78545633]
 sprite_frames = SubResource("SpriteFrames_hjp0y")
 animation = &"jump"
@@ -624,6 +637,7 @@ autoplay = "idle"
 frame_progress = 0.3696094
 
 [node name="Iaco_Spto" type="AnimatedSprite2D" parent="." unique_id=212009970]
+position = Vector2(0, 4)
 sprite_frames = SubResource("SpriteFrames_fdm2o")
 animation = &"idle"
 autoplay = "idle"
