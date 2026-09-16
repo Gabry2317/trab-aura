@@ -1,14 +1,1 @@
-<<<<<<< HEAD
-res://menu.tscn
-res://SCRIPT/play.gd
-res://selezione_personaggio.tscn
-res://SCRIPT/personaggio 2.gd
-res://SCRIPT/toselect.gd
-res://SCRIPT/quit.gd
-res://level.tscn
-=======
-res://level.tscn
-res://SCRIPT/player.gd
 res://WND_trab.tscn
-res://SCRIPT/hit.gd
->>>>>>> 255cac2441944963b561e8b2566c637a38ba0f90
