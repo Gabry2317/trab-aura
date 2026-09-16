@@ -13,7 +13,11 @@ const RUNSPEED = 250.0
 const JUMP_VELOCITY = -300.0
 
 # 0 = trab, 1 = iacopo
+<<<<<<< HEAD
 var skin: int = GameState.selected_skin
+=======
+const skin = 1
+>>>>>>> 2ad5132adde53c34f0d42f97975bfa464fc9d467
 
 @onready var animated_sprite = $TRAB_Sprite2D
 @onready var animated_sprite2 = $Iaco_Spto
