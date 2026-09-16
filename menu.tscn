@@ -1,23 +1,23 @@
 [gd_scene format=3 uid="uid://brf8uscrg5ast"]
 
 [ext_resource type="Texture2D" uid="uid://cyapv8pnvlmy6" path="res://sprite/UI/360_F_1977410715_JXhswK9bVHycE8kXWnPnSIJJOR2jrP4I.png" id="1_lti8b"]
+[ext_resource type="Texture2D" uid="uid://cb41iujp3xxr3" path="res://sprite/UI/menu.png" id="1_mae5d"]
 [ext_resource type="Script" uid="uid://cjvqr0jbl2gve" path="res://Scena 2/SCRIPT/play.gd" id="2_ouk20"]
-[ext_resource type="Script" uid="uid://cvib1fhk3dnf5" path="res://Scena 2/SCRIPT/personaggio 2.gd" id="3_mae5d"]
 
 [node name="Node2D" type="Node2D" unique_id=1696016993]
 
 [node name="foto" type="Sprite2D" parent="." unique_id=1523117616]
-position = Vector2(641, 361)
-scale = Vector2(1.8768328, 2)
-texture = ExtResource("1_lti8b")
+position = Vector2(638.5, 357)
+scale = Vector2(0.83007807, 0.6933594)
+texture = ExtResource("1_mae5d")
 
 [node name="Button" type="Button" parent="." unique_id=1259408516]
-offset_left = 440.0
-offset_top = 322.0
-offset_right = 833.0
-offset_bottom = 416.0
+offset_left = 436.0
+offset_top = 358.0
+offset_right = 829.0
+offset_bottom = 452.0
 action_mode = 0
-flat = true
+text = "PLAY"
 script = ExtResource("2_ouk20")
 
 [node name="Button2" type="Button" parent="." unique_id=2121970817]
@@ -26,4 +26,9 @@ offset_top = 474.0
 offset_right = 734.0
 offset_bottom = 536.0
 text = "BISIO"
-script = ExtResource("3_mae5d")
+
+[node name="360F1977410715JXhswK9bVHycE8kXWnPnSijjor2JrP4i" type="Sprite2D" parent="." unique_id=698358676]
+show_behind_parent = true
+position = Vector2(1436, 828)
+scale = Vector2(4.5293255, 5.0472226)
+texture = ExtResource("1_lti8b")
