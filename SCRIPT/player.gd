@@ -1,7 +1,7 @@
 extends CharacterBody2D
 class_name Player
 
-signal health_changed
+signal health_changed  # <-- aggiunto: serve per healt_bar.gd
 
 @export var max_health: int = 100
 @onready var current_health: int = max_health
@@ -70,4 +70,4 @@ func jumphurt() -> void:
 	current_health -= 10
 	current_health = max(current_health, 0)
 	isHurt = true
-	health_changed.emit()
+	health_changed.emit()  # <-- aggiunto: notifica la barra vita

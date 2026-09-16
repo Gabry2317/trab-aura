@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://hiwvnyo0spfd"]
+
+[ext_resource type="Texture2D" uid="uid://u2jnwnejiiyt" path="res://scelta personaggio/sfondo/character-selection-gender-v0-t5ikpt1sj45g1.png" id="1_tc7ei"]
+
+[node name="selezione personaggio" type="Node2D" unique_id=472251201]
+
+[node name="CharacterSelectionGenderV0T5Ikpt1Sj45g1" type="Sprite2D" parent="." unique_id=689630001]
+position = Vector2(643.5, 359)
+scale = Vector2(2.0078125, 1.9944445)
+texture = ExtResource("1_tc7ei")
