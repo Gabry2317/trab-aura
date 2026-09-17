@@ -20,12 +20,18 @@ var skin: int = GameState.selected_skin
 @onready var animated_sprite = $TRAB_Sprite2D
 @onready var animated_sprite2 = $Iaco_Spto
 @onready var animated_sprite3 = $Naka_Sprite
+@onready var chain_sprite: AnimatedSprite2D = $Iaco_Spto/Chain  # <-- sottoclasse di iacopo usata per l'attacco
 
 var current_sprite: AnimatedSprite2D
+var chain_base_x: float  # <-- posizione X originale di Chain (in editor)
+
 func _ready() -> void:
 	animated_sprite.visible = false
 	animated_sprite2.visible = false
 	animated_sprite3.visible = false
+	chain_sprite.visible = false
+
+	chain_base_x = chain_sprite.position.x  # <-- salva la X di partenza
 
 	match skin:
 		0:
@@ -42,10 +48,11 @@ func _ready() -> void:
 			current_sprite = animated_sprite
 			animated_sprite.visible = true
 
-	# collega il segnale di fine animazione per entrambi gli sprite
+	# collega il segnale di fine animazione per tutti gli sprite
 	animated_sprite.animation_finished.connect(_on_animation_finished)
 	animated_sprite2.animation_finished.connect(_on_animation_finished)
 	animated_sprite3.animation_finished.connect(_on_animation_finished)
+	chain_sprite.animation_finished.connect(_on_chain_animation_finished)  # <-- gestione separata per Chain
 
 
 func _physics_process(delta: float) -> void:
@@ -72,17 +79,19 @@ func _physics_process(delta: float) -> void:
 	if direction:
 		velocity.x = direction * current_speed
 		current_sprite.flip_h = direction < 0
+		chain_sprite.flip_h = direction < 0
+
+		# specchia anche la posizione X di Chain, non solo la grafica
+		if direction < 0:
+			chain_sprite.position.x = -abs(chain_base_x)
+		else:
+			chain_sprite.position.x = abs(chain_base_x)
 	else:
 		velocity.x = move_toward(velocity.x, 0, current_speed)
 
 	# se sta attaccando, non sovrascrivere l'animazione "hit"
 	if not isAttacking:
-		if not is_on_floor():
-			if velocity.y < 0:
-				print("dsd")
-			else:
-				current_sprite.play("fall")
-		elif direction:
+		if direction:
 			if is_running:
 				current_sprite.play("run")
 			else:
@@ -97,12 +106,24 @@ func attack() -> void:
 	if isAttacking:
 		return
 	isAttacking = true
-	current_sprite.play("hit")
+
+	if skin == 1:
+		# iacopo attacca con l'animazione della sua sottoclasse "Chain"
+		chain_sprite.visible = true
+		chain_sprite.play("hit")
+	else:
+		current_sprite.play("hit")
 
 
 func _on_animation_finished() -> void:
 	if current_sprite.animation == "hit":
 		isAttacking = false
+
+
+func _on_chain_animation_finished() -> void:
+	if chain_sprite.animation == "hit":
+		isAttacking = false
+		chain_sprite.visible = false  # torna nascosta finché non riattacca
 
 
 func jumphurt() -> void:

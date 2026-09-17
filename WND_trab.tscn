@@ -127,6 +127,7 @@
 [ext_resource type="Script" uid="uid://chdu580l1u8r2" path="res://SCRIPT/healt_bar.gd" id="122_j50wv"]
 [ext_resource type="Texture2D" uid="uid://d1442vpr1sm0b" path="res://sprite/Player/Nakakata/punc/nakakata-punch.png" id="125_1waqe"]
 [ext_resource type="Texture2D" uid="uid://dnppxibgnhitf" path="res://sprite/Player/Nakakata/idle/NAKAKATYA-idle-trimmed.png" id="126_coqba"]
+[ext_resource type="Texture2D" uid="uid://qrvqfwvoatbs" path="res://sprite/Player/Iacobisio/chain/ChatGPT Image 17 set 2026, 13_20_40.png" id="126_crkag"]
 [ext_resource type="Texture2D" uid="uid://cpvpvs3lmy4ip" path="res://sprite/Player/Nakakata/run/NAKAKATYA-run-trimmed.png" id="127_crkag"]
 [ext_resource type="Texture2D" uid="uid://dde15vymb0vqq" path="res://sprite/Player/Nakakata/walk/nakakata-walk-trimmed.png" id="128_fdapt"]
 
@@ -1021,6 +1022,112 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_sowdp"]
+atlas = ExtResource("126_crkag")
+region = Rect2(384, 0, 384, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_haae4"]
+atlas = ExtResource("126_crkag")
+region = Rect2(1152, 0, 384, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2od2m"]
+atlas = ExtResource("126_crkag")
+region = Rect2(768, 0, 384, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d1unb"]
+atlas = ExtResource("126_crkag")
+region = Rect2(0, 256, 384, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ytqix"]
+atlas = ExtResource("126_crkag")
+region = Rect2(384, 256, 384, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_woxl2"]
+atlas = ExtResource("126_crkag")
+region = Rect2(768, 256, 384, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gavex"]
+atlas = ExtResource("126_crkag")
+region = Rect2(1152, 256, 384, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4ed6e"]
+atlas = ExtResource("126_crkag")
+region = Rect2(0, 512, 384, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d2pr3"]
+atlas = ExtResource("126_crkag")
+region = Rect2(384, 512, 384, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d7yfr"]
+atlas = ExtResource("126_crkag")
+region = Rect2(768, 512, 384, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sveen"]
+atlas = ExtResource("126_crkag")
+region = Rect2(1152, 512, 384, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bauey"]
+atlas = ExtResource("126_crkag")
+region = Rect2(0, 768, 384, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l10vs"]
+atlas = ExtResource("126_crkag")
+region = Rect2(384, 768, 384, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_grehl"]
+atlas = ExtResource("126_crkag")
+region = Rect2(768, 768, 384, 256)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_osicj"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sowdp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_haae4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2od2m")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d1unb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ytqix")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_woxl2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gavex")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4ed6e")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d2pr3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d7yfr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sveen")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bauey")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_l10vs")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_grehl")
+}],
+"loop": 0,
+"name": &"hit",
+"speed": 15.0
+}]
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_majr4"]
 atlas = ExtResource("125_1waqe")
 region = Rect2(0, 256, 256, 256)
@@ -1686,7 +1793,15 @@ position = Vector2(0, 4)
 sprite_frames = SubResource("SpriteFrames_fdm2o")
 animation = &"idle"
 autoplay = "idle"
-frame_progress = 0.09849857
+frame_progress = 0.83852446
+
+[node name="Chain" type="AnimatedSprite2D" parent="Iaco_Spto" unique_id=37666583]
+position = Vector2(78.00001, -38)
+scale = Vector2(0.29925904, 0.40527344)
+sprite_frames = SubResource("SpriteFrames_osicj")
+animation = &"hit"
+frame = 13
+frame_progress = 1.0
 
 [node name="Naka_Sprite" type="AnimatedSprite2D" parent="." unique_id=339889666]
 position = Vector2(-2, 7.0000005)
