@@ -103,6 +103,7 @@
 [ext_resource type="Texture2D" uid="uid://cj04pqcmemru7" path="res://sprite/Player/Iacobisio/walk/Bisio_walk003.png" id="75_y0gr7"]
 [ext_resource type="Texture2D" uid="uid://bi653budyv1kv" path="res://sprite/Player/Iacobisio/walk/Bisio_walk004.png" id="76_avvbj"]
 [ext_resource type="Texture2D" uid="uid://c1ndd38xgade8" path="res://sprite/Player/Iacobisio/walk/Bisio_walk005.png" id="77_jtuq4"]
+[ext_resource type="Script" uid="uid://iaekr470kfyd" path="res://SCRIPT/punch_hitbox_trab.gd" id="78_fdapt"]
 [ext_resource type="Texture2D" uid="uid://d3sfw3tpupl3m" path="res://sprite/Player/Iacobisio/walk/Bisio_walk006.png" id="78_j50wv"]
 [ext_resource type="Texture2D" uid="uid://cyxngneg1nxxe" path="res://sprite/Player/Iacobisio/walk/Bisio_walk007.png" id="79_l3sjg"]
 [ext_resource type="Texture2D" uid="uid://cjpkl2yvqdv4f" path="res://sprite/Player/Iacobisio/walk/Bisio_walk008.png" id="80_o0upa"]
@@ -743,6 +744,8 @@ animations = [{
 "name": &"walk",
 "speed": 8.0
 }]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hjp0y"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_l3cj3"]
 atlas = ExtResource("101_j50wv")
@@ -1765,6 +1768,9 @@ animations = [{
 "speed": 10.0
 }]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_d5qys"]
+size = Vector2(20, 14.796253)
+
 [node name="player" type="CharacterBody2D" unique_id=2012463177]
 
 [node name="collision" type="CollisionShape2D" parent="." unique_id=1003530983]
@@ -1788,6 +1794,14 @@ autoplay = "idle"
 frame = 12
 frame_progress = 1.0
 
+[node name="PunchHitbox" type="Area2D" parent="TRAB_Sprite2D" unique_id=1603874996]
+script = ExtResource("78_fdapt")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TRAB_Sprite2D/PunchHitbox" unique_id=1281391491]
+position = Vector2(103, -34)
+shape = SubResource("RectangleShape2D_hjp0y")
+disabled = true
+
 [node name="Iaco_Spto" type="AnimatedSprite2D" parent="." unique_id=212009970]
 position = Vector2(0, 4)
 sprite_frames = SubResource("SpriteFrames_fdm2o")
@@ -1803,11 +1817,28 @@ animation = &"hit"
 frame = 13
 frame_progress = 1.0
 
+[node name="PunchHitbox" type="Area2D" parent="Iaco_Spto/Chain" unique_id=1771934556]
+script = ExtResource("78_fdapt")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Iaco_Spto/Chain/PunchHitbox" unique_id=202024339]
+position = Vector2(147.02979, 44.41446)
+scale = Vector2(3.3415868, 2.4674704)
+shape = SubResource("RectangleShape2D_hjp0y")
+disabled = true
+
 [node name="Naka_Sprite" type="AnimatedSprite2D" parent="." unique_id=339889666]
-position = Vector2(-2, 7.0000005)
-scale = Vector2(0.7421875, 0.8339844)
+position = Vector2(3, 2.1249952)
+scale = Vector2(0.7421875, 0.93652344)
 sprite_frames = SubResource("SpriteFrames_3c2fn")
 animation = &"hit"
 autoplay = "idle"
 frame = 19
 frame_progress = 1.0
+
+[node name="PunchHitbox" type="Area2D" parent="Naka_Sprite" unique_id=763832079]
+script = ExtResource("78_fdapt")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Naka_Sprite/PunchHitbox" unique_id=580409280]
+position = Vector2(80.84211, -42.17097)
+shape = SubResource("RectangleShape2D_d5qys")
+disabled = true
