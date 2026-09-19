@@ -1,15 +1,16 @@
 [gd_scene format=3 uid="uid://hiwvnyo0spfd"]
 
+[ext_resource type="Script" uid="uid://cipy4g7apisk0" path="res://SCRIPT/selezione_personaggio.gd" id="1_mlc5f"]
 [ext_resource type="Texture2D" uid="uid://u2jnwnejiiyt" path="res://sprite/UI/character-selection-gender-v0-t5ikpt1sj45g1.png" id="1_tc7ei"]
 [ext_resource type="Texture2D" uid="uid://cdwtotglxuof8" path="res://sprite/Player/proppick/Iacobisio.png" id="2_nvn06"]
 [ext_resource type="Texture2D" uid="uid://cce4o7a7h5lwd" path="res://sprite/Player/proppick/WND_trab.png" id="3_3cjf2"]
 [ext_resource type="Texture2D" uid="uid://drocuhbd43aky" path="res://sprite/Player/proppick/WND_trab_bigprop.png" id="4_evl8s"]
 [ext_resource type="Texture2D" uid="uid://bugoywwy8red0" path="res://sprite/Player/proppick/IACOBISIO_bigprop.png" id="5_r7y7g"]
-[ext_resource type="Script" uid="uid://cvib1fhk3dnf5" path="res://SCRIPT/personaggio 2.gd" id="6_r7y7g"]
-[ext_resource type="Script" uid="uid://cjvqr0jbl2gve" path="res://SCRIPT/play.gd" id="7_mlc5f"]
-[ext_resource type="Script" uid="uid://d02a5thx70g3t" path="res://SCRIPT/personaggio 3.gd" id="8_1yirc"]
+[ext_resource type="Script" uid="uid://c54ciwtoeq5yx" path="res://SCRIPT/scelta_personaggio.gd" id="7_1yirc"]
+[ext_resource type="Texture2D" uid="uid://0eeyiec0lxy8" path="res://sprite/Player/Nakakata/nakakata.png" id="8_1yirc"]
 
 [node name="selezione personaggio" type="Node2D" unique_id=472251201]
+script = ExtResource("1_mlc5f")
 
 [node name="CharacterSelectionGenderV0T5Ikpt1Sj45g1" type="Sprite2D" parent="." unique_id=689630001]
 position = Vector2(640, 360.50003)
@@ -43,7 +44,8 @@ offset_top = 201.0
 offset_right = 441.0
 offset_bottom = 381.0
 flat = true
-script = ExtResource("6_r7y7g")
+script = ExtResource("7_1yirc")
+skin_id = 1
 
 [node name="tommaso" type="Button" parent="." unique_id=328138598]
 offset_left = 456.0
@@ -51,12 +53,25 @@ offset_top = 200.0
 offset_right = 632.0
 offset_bottom = 380.0
 flat = true
-script = ExtResource("7_mlc5f")
+script = ExtResource("7_1yirc")
 
 [node name="nakakata" type="Button" parent="." unique_id=479731521]
 offset_left = 651.0
-offset_top = 203.0
+offset_top = 199.0
 offset_right = 827.0
-offset_bottom = 383.0
+offset_bottom = 379.0
 flat = true
-script = ExtResource("8_1yirc")
+script = ExtResource("7_1yirc")
+skin_id = 2
+
+[node name="Label" type="Label" parent="." unique_id=1535801522]
+offset_left = 157.0
+offset_top = 102.0
+offset_right = 323.0
+offset_bottom = 179.0
+
+[node name="Nakakata" type="Sprite2D" parent="." unique_id=1901387925]
+show_behind_parent = true
+position = Vector2(754, 290.00003)
+scale = Vector2(0.8498014, 0.9502912)
+texture = ExtResource("8_1yirc")

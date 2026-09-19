@@ -14,5 +14,3 @@ func _ready() -> void:
 
 func update() -> void:
 	value = player.current_health
-	if player.current_health < 1:
-		get_tree().quit()

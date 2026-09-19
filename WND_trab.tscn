@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://bspnwas72g4u5"]
 
 [ext_resource type="Texture2D" uid="uid://c3whyq78sh2tc" path="res://sprite/Player/WND_trab/idle/WND_trab_idle000.png" id="1_bfour"]
+[ext_resource type="Script" uid="uid://c3csinjlkj8kl" path="res://SCRIPT/hit.gd" id="1_rvj5e"]
 [ext_resource type="Texture2D" uid="uid://by24qgu42hunh" path="res://sprite/Player/WND_trab/idle/WND_trab_idle001.png" id="2_8gr2b"]
 [ext_resource type="Texture2D" uid="uid://c834leeej4vu6" path="res://sprite/Player/WND_trab/idle/WND_trab_idle002.png" id="3_vl8ci"]
 [ext_resource type="Texture2D" uid="uid://bw8m211ylv4bf" path="res://sprite/Player/WND_trab/pugno/trab-punch.png" id="4_coqba"]
@@ -131,6 +132,7 @@
 [ext_resource type="Texture2D" uid="uid://qrvqfwvoatbs" path="res://sprite/Player/Iacobisio/chain/ChatGPT Image 17 set 2026, 13_20_40.png" id="126_crkag"]
 [ext_resource type="Texture2D" uid="uid://cpvpvs3lmy4ip" path="res://sprite/Player/Nakakata/run/NAKAKATYA-run-trimmed.png" id="127_crkag"]
 [ext_resource type="Texture2D" uid="uid://dde15vymb0vqq" path="res://sprite/Player/Nakakata/walk/nakakata-walk-trimmed.png" id="128_fdapt"]
+[ext_resource type="Script" uid="uid://dmq8gbbsrlmtp" path="res://SCRIPT/hurtbox.gd" id="133_agdh1"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fdm2o"]
 size = Vector2(53, 186)
@@ -746,6 +748,7 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hjp0y"]
+size = Vector2(61, 20)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_l3cj3"]
 atlas = ExtResource("101_j50wv")
@@ -1769,9 +1772,13 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_d5qys"]
-size = Vector2(20, 14.796253)
+size = Vector2(69.28421, 14.796253)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_elr2n"]
+size = Vector2(59, 185)
 
 [node name="player" type="CharacterBody2D" unique_id=2012463177]
+script = ExtResource("1_rvj5e")
 
 [node name="collision" type="CollisionShape2D" parent="." unique_id=1003530983]
 position = Vector2(-3.5, 6)
@@ -1798,7 +1805,7 @@ frame_progress = 1.0
 script = ExtResource("78_fdapt")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="TRAB_Sprite2D/PunchHitbox" unique_id=1281391491]
-position = Vector2(103, -34)
+position = Vector2(80, -35)
 shape = SubResource("RectangleShape2D_hjp0y")
 disabled = true
 
@@ -1807,7 +1814,7 @@ position = Vector2(0, 4)
 sprite_frames = SubResource("SpriteFrames_fdm2o")
 animation = &"idle"
 autoplay = "idle"
-frame_progress = 0.83852446
+frame_progress = 0.7805679
 
 [node name="Chain" type="AnimatedSprite2D" parent="Iaco_Spto" unique_id=37666583]
 position = Vector2(78.00001, -38)
@@ -1821,8 +1828,8 @@ frame_progress = 1.0
 script = ExtResource("78_fdapt")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Iaco_Spto/Chain/PunchHitbox" unique_id=202024339]
-position = Vector2(147.02979, 44.41446)
-scale = Vector2(3.3415868, 2.4674704)
+position = Vector2(78.52725, 44.41446)
+scale = Vector2(3.3415868, 2.4674706)
 shape = SubResource("RectangleShape2D_hjp0y")
 disabled = true
 
@@ -1839,6 +1846,15 @@ frame_progress = 1.0
 script = ExtResource("78_fdapt")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Naka_Sprite/PunchHitbox" unique_id=580409280]
-position = Vector2(80.84211, -42.17097)
+position = Vector2(56.199997, -42.170963)
+scale = Vector2(0.99999994, 1)
 shape = SubResource("RectangleShape2D_d5qys")
 disabled = true
+
+[node name="Hurtbox" type="Area2D" parent="." unique_id=8138055]
+script = ExtResource("133_agdh1")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox" unique_id=252264326]
+position = Vector2(-1.5, 6.5)
+shape = SubResource("RectangleShape2D_elr2n")
+debug_color = Color(0.97554773, 0.43208897, 0.8611883, 0.41960785)

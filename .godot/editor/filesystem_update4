@@ -1,6 +1,0 @@
-res://level.tscn
-res://SCRIPT/enemy.gd
-res://SCRIPT/hit.gd
-res://SCRIPT/hurtbox.gd
-res://SCRIPT/punch_hitbox_trab.gd
-res://WND_trab.tscn

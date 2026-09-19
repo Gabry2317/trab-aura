@@ -5,11 +5,8 @@
 [ext_resource type="PackedScene" uid="uid://bspnwas72g4u5" path="res://WND_trab.tscn" id="2_oi3di"]
 [ext_resource type="Texture2D" uid="uid://noyw04ayybjj" path="res://sprite/map/backdrop.png" id="3_1ainy"]
 [ext_resource type="Script" uid="uid://brag415xffcvp" path="res://SCRIPT/camera_2d.gd" id="3_f2txt"]
-[ext_resource type="Script" uid="uid://c3csinjlkj8kl" path="res://SCRIPT/hit.gd" id="5_n6hdu"]
+[ext_resource type="PackedScene" uid="uid://lg0ip1ev4k0m" path="res://fine_partita.tscn" id="7_km5ld"]
 [ext_resource type="AudioStream" uid="uid://cvxc68pr2ya60" path="res://sound/Music/Seve me (A7X).mp3" id="7_n6hdu"]
-[ext_resource type="Texture2D" uid="uid://mlbhnijxmxic" path="res://sprite/Player/WND_trab/AMI_move.png" id="8_8cye3"]
-[ext_resource type="Script" uid="uid://kui3og3d10d4" path="res://SCRIPT/enemy.gd" id="9_2orkt"]
-[ext_resource type="Script" uid="uid://dmq8gbbsrlmtp" path="res://SCRIPT/hurtbox.gd" id="10_aicyk"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_0b4ue"]
 texture = ExtResource("1_vonw3")
@@ -12528,12 +12525,6 @@ sources/1 = SubResource("TileSetAtlasSource_n6hdu")
 streams_count = 1
 stream_0/stream = ExtResource("7_n6hdu")
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_d5qys"]
-size = Vector2(80, 75)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_elr2n"]
-size = Vector2(81.5, 83)
-
 [node name="level" type="Node" unique_id=2141253370]
 script = ExtResource("1_oi3di")
 
@@ -12555,8 +12546,12 @@ layer_3/tile_data = PackedInt32Array(-524295, 1048577, 2, -458759, 1048577, 3, -
 [node name="player" parent="." unique_id=297545212 groups=["players"] instance=ExtResource("2_oi3di")]
 position = Vector2(537, 420)
 scale = Vector2(0.6, 0.6)
-script = ExtResource("5_n6hdu")
-max_health = null
+
+[node name="player2" parent="." unique_id=2012463177 groups=["players"] instance=ExtResource("2_oi3di")]
+position = Vector2(787, 420)
+scale = Vector2(0.6, 0.6)
+player_id = 1
+device_id = -2
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1735532043]
 position = Vector2(694, 348)
@@ -12568,39 +12563,4 @@ stream = SubResource("AudioStreamRandomizer_fdm2o")
 volume_db = -14.0
 autoplay = true
 
-[node name="enemy" type="CharacterBody2D" parent="." unique_id=831023851]
-position = Vector2(798, 430)
-scale = Vector2(0.15359478, 0.18382353)
-script = ExtResource("9_2orkt")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="enemy" unique_id=1832980885]
-position = Vector2(-6.510742, 27.199951)
-scale = Vector2(6.510638, 5.4400005)
-shape = SubResource("RectangleShape2D_d5qys")
-
-[node name="Hurtbox" type="Area2D" parent="enemy/CollisionShape2D" unique_id=135907165]
-unique_name_in_owner = true
-position = Vector2(-797, -434.99994)
-scale = Vector2(1, 0.9999999)
-script = ExtResource("10_aicyk")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="enemy/CollisionShape2D/Hurtbox" unique_id=608567276]
-position = Vector2(798, 427.5)
-shape = SubResource("RectangleShape2D_elr2n")
-debug_color = Color(0.90518546, 0.17105508, 0.6280246, 0.41960785)
-
-[node name="HealthBarAnchor" type="Node2D" parent="enemy" unique_id=1617651923]
-position = Vector2(-5195.4893, -2339.2002)
-scale = Vector2(6.510638, 5.4400005)
-
-[node name="HealthBar" type="ProgressBar" parent="enemy/HealthBarAnchor" unique_id=1003608724]
-offset_left = 773.0
-offset_top = 373.0
-offset_right = 823.0
-offset_bottom = 400.0
-value = 100.0
-
-[node name="AmiMove" type="Sprite2D" parent="." unique_id=813281323]
-position = Vector2(796, 432.5)
-scale = Vector2(0.14705874, 0.19852942)
-texture = ExtResource("8_8cye3")
+[node name="FinePartita" parent="." unique_id=348708548 instance=ExtResource("7_km5ld")]
