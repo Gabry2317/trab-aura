@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ux38xn157sah"
-path="res://.godot/imported/WhatsApp_Image_2026-08-27_at_01.47.39-removebg-preview.png-a784b9eb3a9cc97b191646fb2b7edea0.ctex"
+uid="uid://yb7uf4hboodw"
+path="res://.godot/imported/andrix-idle-trimmed.png-3c2f26e6f6bb660e678438cfdb9dc759.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprite/Player/proppick/WhatsApp_Image_2026-08-27_at_01.47.39-removebg-preview.png"
-dest_files=["res://.godot/imported/WhatsApp_Image_2026-08-27_at_01.47.39-removebg-preview.png-a784b9eb3a9cc97b191646fb2b7edea0.ctex"]
+source_file="res://sprite/Player/Andrix/idle/andrix-idle-trimmed.png"
+dest_files=["res://.godot/imported/andrix-idle-trimmed.png-3c2f26e6f6bb660e678438cfdb9dc759.ctex"]
 
 [params]
 

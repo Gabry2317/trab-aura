@@ -54,14 +54,14 @@ func set_fullscreen(value: bool) -> void:
 	)
 	save_settings()
 
-# Configurazione multiplayer: una entry per player, letta da hit.gd tramite player_id
+# Configurazione multiplayer: una entry per player, letta da player.gd tramite player_id
 # device_id: -1 = tastiera P1, -2 = tastiera P2, >=0 = indice pad
 var player_configs: Array = [
 	{"skin": 0, "device_id": -1},  # player 1: default trab, tastiera schema 1
 	{"skin": 1, "device_id": -2},  # player 2: default iacopo, tastiera schema 2
 ]
 
-# Mantenuta solo come fallback in hit.gd (non viene più scritta dai pulsanti)
+# Mantenuta solo come fallback in player.gd (non viene più scritta dai pulsanti)
 var selected_skin: int = 0
 
 # Quale player sta scegliendo adesso nella schermata di selezione (0 = P1, 1 = P2)

@@ -9,18 +9,21 @@ extends Node2D
 @onready var bisio_btn: Button = $bisio
 @onready var tommaso_btn: Button = $tommaso
 @onready var nakakata_btn: Button = $nakakata
+@onready var andrix_btn: Button = $andrix
 
 # 0 = trab, 1 = iacopo, 2 = naka
 const PREVIEW_TEXTURES := {
 	0: preload("res://sprite/Player/proppick/WND_trab_bigprop.png"),
 	1: preload("res://sprite/Player/proppick/IACOBISIO_bigprop.png"),
-	2: preload("res://sprite/Player/proppick/NAKAKATA.png"),
+	2: preload("res://sprite/Player/proppick/NAKAKATA_BIG_PRPO.png"),
+	3: preload("res://sprite/Player/proppick/andrix_bigprop.png"),
 }
 # scala per uniformare l'altezza delle 3 immagini (le sorgenti hanno dimensioni diverse)
 const PREVIEW_SCALE := {
 	0: 1.0,
 	1: 1.2528716,
-	2: 0.4,
+	2: 0.45,
+	3: 0.4,
 }
 
 # ordine visivo sinistra -> destra dei personaggi selezionabili
@@ -33,12 +36,14 @@ func _ready() -> void:
 		{"skin": 1, "btn": bisio_btn},
 		{"skin": 0, "btn": tommaso_btn},
 		{"skin": 2, "btn": nakakata_btn},
+		{"skin": 3, "btn": andrix_btn},
 	]
 
 	# il mouse continua a funzionare: passandoci sopra sposta anche il cursore a freccette
 	bisio_btn.mouse_entered.connect(_hover_to.bind(0))
 	tommaso_btn.mouse_entered.connect(_hover_to.bind(1))
 	nakakata_btn.mouse_entered.connect(_hover_to.bind(2))
+	andrix_btn.mouse_entered.connect(_hover_to.bind(3))
 
 	GameState.selection_changed.connect(_refresh)
 	_refresh()

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://0eeyiec0lxy8"
-path="res://.godot/imported/nakakata.png-f8077299b4cb56d44fc9033c459d1ca0.ctex"
+uid="uid://cbkx70is3wjeo"
+path="res://.godot/imported/andrix-attack.png-79ebe55f2dd02d7814820a051fb889e6.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprite/Player/Nakakata/nakakata.png"
-dest_files=["res://.godot/imported/nakakata.png-f8077299b4cb56d44fc9033c459d1ca0.ctex"]
+source_file="res://sprite/Player/Andrix/hit/andrix-attack.png"
+dest_files=["res://.godot/imported/andrix-attack.png-79ebe55f2dd02d7814820a051fb889e6.ctex"]
 
 [params]
 
