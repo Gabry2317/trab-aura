@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://bugoywwy8red0" path="res://sprite/Player/proppick/IACOBISIO_bigprop.png" id="5_r7y7g"]
 [ext_resource type="Script" uid="uid://c54ciwtoeq5yx" path="res://SCRIPT/scelta_personaggio.gd" id="7_1yirc"]
 [ext_resource type="Texture2D" uid="uid://0eeyiec0lxy8" path="res://sprite/Player/Nakakata/nakakata.png" id="8_1yirc"]
+[ext_resource type="Texture2D" uid="uid://dafk75umfnxap" path="res://sprite/Player/proppick/NAKAKATA.png" id="9_naka1"]
 
 [node name="selezione personaggio" type="Node2D" unique_id=472251201]
 script = ExtResource("1_mlc5f")
@@ -29,11 +30,12 @@ position = Vector2(545, 300)
 scale = Vector2(0.16072817, 0.15289573)
 texture = ExtResource("3_3cjf2")
 
-[node name="WndTrabBigprop" type="Sprite2D" parent="." unique_id=1561770992]
+[node name="AnteprimaP1" type="Sprite2D" parent="." unique_id=1561770992]
 position = Vector2(56, 422)
 texture = ExtResource("4_evl8s")
 
-[node name="IacobisioBigprop" type="Sprite2D" parent="." unique_id=777532634]
+[node name="AnteprimaP2" type="Sprite2D" parent="." unique_id=777532634]
+visible = false
 position = Vector2(1151.2822, 421.28214)
 scale = Vector2(-1.2528716, 1.2528716)
 texture = ExtResource("5_r7y7g")
@@ -43,6 +45,7 @@ offset_left = 265.0
 offset_top = 201.0
 offset_right = 441.0
 offset_bottom = 381.0
+focus_mode = 0
 flat = true
 script = ExtResource("7_1yirc")
 skin_id = 1
@@ -52,6 +55,7 @@ offset_left = 456.0
 offset_top = 200.0
 offset_right = 632.0
 offset_bottom = 380.0
+focus_mode = 0
 flat = true
 script = ExtResource("7_1yirc")
 
@@ -60,6 +64,7 @@ offset_left = 651.0
 offset_top = 199.0
 offset_right = 827.0
 offset_bottom = 379.0
+focus_mode = 0
 flat = true
 script = ExtResource("7_1yirc")
 skin_id = 2
@@ -75,3 +80,11 @@ show_behind_parent = true
 position = Vector2(754, 290.00003)
 scale = Vector2(0.8498014, 0.9502912)
 texture = ExtResource("8_1yirc")
+
+[node name="Cursore" type="ColorRect" parent="."]
+offset_left = 259.0
+offset_top = 195.0
+offset_right = 447.0
+offset_bottom = 387.0
+mouse_filter = 2
+color = Color(1, 0.9, 0.2, 0.25)

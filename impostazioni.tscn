@@ -1,0 +1,78 @@
+[gd_scene load_steps=2 format=3 uid="uid://c5imp0settin6s"]
+
+[ext_resource type="Script" path="res://SCRIPT/impostazioni.gd" id="1_set01"]
+
+[node name="Impostazioni" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_set01")
+
+[node name="Sfondo" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.078, 0.07, 0.11, 1)
+
+[node name="Pannello" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -240.0
+offset_top = -170.0
+offset_right = 240.0
+offset_bottom = 170.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Contenitore" type="VBoxContainer" parent="Pannello"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = 20.0
+offset_right = -24.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 22
+
+[node name="Titolo" type="Label" parent="Pannello/Contenitore"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Impostazioni"
+horizontal_alignment = 1
+
+[node name="RigaVolume" type="VBoxContainer" parent="Pannello/Contenitore"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="LabelVolume" type="Label" parent="Pannello/Contenitore/RigaVolume"]
+layout_mode = 2
+text = "Volume: 100%"
+
+[node name="SliderVolume" type="HSlider" parent="Pannello/Contenitore/RigaVolume"]
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 2
+max_value = 100.0
+value = 100.0
+step = 1.0
+
+[node name="CheckFullscreen" type="CheckButton" parent="Pannello/Contenitore"]
+layout_mode = 2
+text = "Schermo intero"
+
+[node name="Indietro" type="Button" parent="Pannello/Contenitore"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 48)
+text = "Indietro"
