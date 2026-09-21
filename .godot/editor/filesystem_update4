@@ -1,2 +1,6 @@
+<<<<<<< HEAD
 res://level.tscn
 res://theme/ui_theme.tres
+=======
+res://data/fighters.cfg
+>>>>>>> 51e74a7904ecda08f7f8c3355f597ce67582426d
