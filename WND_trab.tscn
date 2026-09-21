@@ -2312,6 +2312,7 @@ shape = SubResource("RectangleShape2D_hjp0y")
 disabled = true
 
 [node name="Iaco_Spto" type="AnimatedSprite2D" parent="." unique_id=212009970]
+visible = false
 position = Vector2(-1, -9)
 scale = Vector2(1.1132813, 1.1132813)
 sprite_frames = SubResource("SpriteFrames_fdm2o")
@@ -2356,8 +2357,7 @@ shape = SubResource("RectangleShape2D_d5qys")
 disabled = true
 
 [node name="andrix_Sprite" type="AnimatedSprite2D" parent="." unique_id=510414712]
-visible = false
-position = Vector2(-2.000001, -9)
+position = Vector2(-2.000001, -5)
 scale = Vector2(1.201172, 1.1110841)
 sprite_frames = SubResource("SpriteFrames_u840f")
 animation = &"idle"

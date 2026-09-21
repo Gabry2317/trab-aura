@@ -16,6 +16,16 @@ var attack_move_speed: float = 10.0
 var jump_velocity: float = -300.0
 var can_run: bool = true
 
+# --- feedback dei colpi (vedi _play_hit_feedback) ---
+var hit_knockback: float = 220.0       # rinculo: velocita' orizzontale della spinta subita
+var hit_stun_duration: float = 0.25    # stordimento: per quanti secondi non si risponde ai comandi
+var hit_flash_duration: float = 0.12   # per quanti secondi lo sprite resta colorato dopo il colpo
+var hit_flash_color: Color = Color(1.0, 0.35, 0.35, 1.0)  # colore del lampo (default: rossastro)
+var hit_sound: AudioStream = null      # caricato da hit_sound in fighters.cfg
+
+# --- blocco (guardia): tasti p1_secondary / p2_secondary ---
+var block_damage_reduction: float = 0.3  # % di danno ancora subita mentre si blocca (0 = blocco perfetto)
+
 # --- NUOVO: identità e schema di controllo del player ---
 @export var player_id: int = 0
 # device_id:
@@ -26,9 +36,13 @@ var can_run: bool = true
 # skin_override: -1 = usa GameState, altrimenti forza la skin per questo player
 @export var skin_override: int = -1
 
-var isHurt: bool = false
+var isHurt: bool = false  # true mentre dura lo stordimento da colpo subito (vedi hurt_stun_left)
 var isAttacking: bool = false
 var hitbox_delay_left: float = 0.0  # secondi che mancano all'attivazione della hitbox
+var hurt_stun_left: float = 0.0  # secondi di stordimento rimanenti dopo un colpo subito
+var is_blocking: bool = false  # true mentre il player tiene premuto il tasto "secondary"
+
+@onready var hit_sfx: AudioStreamPlayer = AudioStreamPlayer.new()  # riprodotto a ogni colpo subito
 
 const FIGHTERS_PATH := "res://data/fighters.cfg"
 static var _cfg: ConfigFile
@@ -235,9 +249,22 @@ func _load_stats() -> void:
 	jump_velocity = float(_stat("jump_velocity", jump_velocity))
 	can_run = bool(_stat("can_run", can_run))
 
+	hit_knockback = float(_stat("hit_knockback", hit_knockback))
+	hit_stun_duration = float(_stat("hit_stun_duration", hit_stun_duration))
+	hit_flash_duration = float(_stat("hit_flash_duration", hit_flash_duration))
+	hit_flash_color = _stat("hit_flash_color", hit_flash_color)
+	var hit_sound_path: String = str(_stat("hit_sound", ""))
+	hit_sound = load(hit_sound_path) if hit_sound_path != "" else null
+
+	block_damage_reduction = clampf(float(_stat("block_damage_reduction", block_damage_reduction)), 0.0, 1.0)
+
 
 func _ready() -> void:
 	hurtbox.damaged.connect(_on_damaged)
+
+	hit_sfx.name = "HitSfx"
+	hit_sfx.bus = "Master"
+	add_child(hit_sfx)
 
 	var fighters: Array = _get_fighter_names()
 
@@ -328,15 +355,41 @@ func _is_running() -> bool:
 			return Input.is_joy_button_pressed(device_id, JOY_BUTTON_LEFT_SHOULDER)
 
 
+# tasto "secondary" (p1_secondary / p2_secondary in project.godot): tenuto
+# premuto attiva il blocco (vedi is_blocking in _physics_process)
+func _block_pressed() -> bool:
+	match device_id:
+		-1:
+			return Input.is_action_pressed("p1_secondary")
+		-2:
+			return Input.is_action_pressed("p2_secondary")
+		_:
+			return Input.is_joy_button_pressed(device_id, JOY_BUTTON_X)
+
+
 func _physics_process(delta: float) -> void:
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 
-	if _jump_just_pressed() and is_on_floor():
-		velocity.y = jump_velocity
+	# stordimento da colpo subito: durante hurt_stun_left il player non
+	# risponde ai comandi, ma gravita' e rinculo continuano normalmente
+	if hurt_stun_left > 0.0:
+		hurt_stun_left = maxf(hurt_stun_left - delta, 0.0)
+		isHurt = hurt_stun_left > 0.0
+		velocity.x = move_toward(velocity.x, 0, hit_knockback * delta * 2.0)
+		move_and_slide()
+		return
 
-	if _attack_just_pressed():
-		attack()
+	# blocco: tenendo "secondary" fermi, non si può attaccare né saltare
+	# (non si può iniziare a bloccare a metà di un attacco)
+	is_blocking = _block_pressed() and is_on_floor() and not isAttacking
+
+	if not is_blocking:
+		if _jump_just_pressed() and is_on_floor():
+			velocity.y = jump_velocity
+
+		if _attack_just_pressed():
+			attack()
 
 	# la hitbox si attiva solo quando scade il ritardo dell'attacco
 	if hitbox_delay_left > 0.0:
@@ -351,7 +404,8 @@ func _physics_process(delta: float) -> void:
 	if isAttacking:
 		current_speed = attack_move_speed
 
-	var direction := _get_direction()
+	# mentre si blocca si resta fermi sul posto
+	var direction := 0.0 if is_blocking else _get_direction()
 
 	if direction:
 		velocity.x = direction * current_speed
@@ -407,7 +461,44 @@ func _on_chain_animation_finished() -> void:
 func _on_damaged(amount: int, source: Node) -> void:
 	if source == self or current_health <= 0:
 		return  # un player non può colpire se stesso, né essere colpito da morto
-	current_health = maxi(current_health - amount, 0)
+
+	# bloccando si subisce solo una frazione del danno (block_damage_reduction)
+	var applied_damage: int = amount
+	if is_blocking:
+		applied_damage = int(round(amount * block_damage_reduction))
+
+	current_health = maxi(current_health - applied_damage, 0)
 	health_changed.emit()  # aggiorna la barra vita
+
+	_play_hit_feedback(source, is_blocking)
+
 	if current_health <= 0:
 		died.emit(self)
+
+
+# Rinculo + stordimento breve + lampo sullo sprite + suono d'impatto.
+# Se il colpo e' stato bloccato: rinculo ridotto e niente stordimento.
+func _play_hit_feedback(source: Node, blocked: bool) -> void:
+	if source is Node2D:
+		var push_dir: float = signf(global_position.x - source.global_position.x)
+		if push_dir == 0.0:
+			push_dir = 1.0 if current_sprite.flip_h else -1.0
+		velocity.x = push_dir * hit_knockback * (0.4 if blocked else 1.0)
+
+	if not blocked:
+		hurt_stun_left = hit_stun_duration
+		isHurt = true
+
+	_flash_sprite()
+
+	if hit_sound:
+		hit_sfx.stream = hit_sound
+		hit_sfx.play()
+
+
+func _flash_sprite() -> void:
+	if hit_flash_duration <= 0.0:
+		return
+	current_sprite.modulate = hit_flash_color
+	var tween: Tween = create_tween()
+	tween.tween_property(current_sprite, "modulate", Color.WHITE, hit_flash_duration)
