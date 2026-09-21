@@ -1792,7 +1792,7 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_d5qys"]
-size = Vector2(102.642105, 14.796253)
+size = Vector2(61.224205, 14.796253)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_vbyc7"]
 atlas = ExtResource("133_bs25f")
@@ -2327,6 +2327,7 @@ shape = SubResource("RectangleShape2D_hjp0y")
 disabled = true
 
 [node name="Iaco_Spto" type="AnimatedSprite2D" parent="." unique_id=212009970]
+visible = false
 position = Vector2(-2, -6)
 scale = Vector2(1.1132813, 1.1132813)
 sprite_frames = SubResource("SpriteFrames_fdm2o")
@@ -2371,7 +2372,6 @@ shape = SubResource("RectangleShape2D_d5qys")
 disabled = true
 
 [node name="andrix_Sprite" type="AnimatedSprite2D" parent="." unique_id=510414712]
-visible = false
 position = Vector2(-2.842171e-14, -4)
 scale = Vector2(1.201172, 1.1110841)
 sprite_frames = SubResource("SpriteFrames_u840f")
@@ -2382,8 +2382,7 @@ autoplay = "idle"
 script = ExtResource("78_fdapt")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="andrix_Sprite/PunchHitbox" unique_id=1578298769]
-position = Vector2(76.67895, -39)
-scale = Vector2(0.99999994, 1)
+position = Vector2(55.970005, -39.000004)
 shape = SubResource("RectangleShape2D_d5qys")
 disabled = true
 
