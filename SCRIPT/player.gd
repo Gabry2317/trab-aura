@@ -33,6 +33,28 @@ var blood_speed_max: float = 180.0
 # --- blocco (guardia): tasti p1_secondary / p2_secondary ---
 var block_damage_reduction: float = 0.3  # % di danno ancora subita mentre si blocca (0 = blocco perfetto)
 
+# --- attacco secondario "gancio" (solo iacopo: vedi secondary_attack in fighters.cfg) ---
+# sullo stesso tasto "secondary": per chi ha secondary_attack = true quel tasto
+# non blocca piu', ma carica/lancia questa mossa (vedi _process_secondary_attack)
+var has_secondary_attack: bool = false
+var secondary_damage: int = 15
+var secondary_range: float = 2000.0        # lunghezza della catena: deve coprire tutta la mappa
+var secondary_height: float = 36.0         # altezza dell'area colpita: bassa, per poterla schivare saltando
+var secondary_ground_offset: float = 80.0  # quanto in basso rispetto al centro del player (vicino ai piedi)
+var secondary_release_delay: float = 0.35  # ritardo tra il rilascio del tasto e l'attivazione del "gancio"
+var secondary_hit_delay: float = 0.25      # da quando parte "gancio" a quando la catena e' a piena estensione
+var secondary_hit_window: float = 0.15     # per quanti secondi la catena estesa fa danno
+var secondary_sheet: String = ""           # foglio sprite del portale/gancio (es. big_chains.png)
+var secondary_sheet_hframes: int = 1
+var secondary_sheet_vframes: int = 1
+var secondary_portal_frames: int = 1       # primi N fotogrammi del foglio = animazione "portale" (loop)
+
+enum SecondaryState {IDLE, CHARGE, WAIT, REACH, STRIKE, COOLDOWN}
+var _sec_state: SecondaryState = SecondaryState.IDLE
+var _sec_timer: float = 0.0
+var _secondary_sprite: AnimatedSprite2D
+var _secondary_hitbox: Hitbox
+
 # --- NUOVO: identità e schema di controllo del player ---
 @export var player_id: int = 0
 # device_id:
@@ -244,6 +266,92 @@ func _get_or_build_hitbox(fighter: String, sprite: AnimatedSprite2D) -> Hitbox:
 	return hitbox
 
 
+# Costruisce (se secondary_sheet e' impostato per questo personaggio) lo sprite
+# del portale/gancio: stesso principio di _build_dynamic_sprite, ma i primi
+# secondary_portal_frames fotogrammi del foglio diventano l'animazione "portale"
+# (in loop, mostrata mentre si carica) e il resto l'animazione "gancio" (una
+# volta sola, mostrata quando si rilascia il tasto). Il foglio e' pensato in
+# verticale (la catena cresce verso il basso): lo sprite viene ruotato di 90°
+# a runtime per farla crescere in orizzontale (vedi _fire_secondary_attack).
+func _build_secondary_sprite() -> AnimatedSprite2D:
+	if secondary_sheet == "":
+		return null
+
+	var texture: Texture2D = load(secondary_sheet)
+	if texture == null:
+		push_warning("secondary_sheet '%s' non trovato: niente attacco secondario per %s" % [secondary_sheet, fighter_name])
+		return null
+
+	var hframes: int = maxi(secondary_sheet_hframes, 1)
+	var vframes: int = maxi(secondary_sheet_vframes, 1)
+	var total_frames: int = hframes * vframes
+	var portal_frames: int = clampi(secondary_portal_frames, 1, total_frames)
+
+	var cell_w: float = texture.get_width() / float(hframes)
+	var cell_h: float = texture.get_height() / float(vframes)
+
+	var frames := SpriteFrames.new()
+	frames.remove_animation("default")
+	frames.add_animation("portale")
+	frames.set_animation_loop("portale", true)
+	frames.set_animation_speed("portale", 4.0)
+	frames.add_animation("gancio")
+	frames.set_animation_loop("gancio", false)
+	frames.set_animation_speed("gancio", 14.0)
+
+	var idx: int = 0
+	for row in range(vframes):
+		for col in range(hframes):
+			var atlas := AtlasTexture.new()
+			atlas.atlas = texture
+			atlas.region = Rect2(col * cell_w, row * cell_h, cell_w, cell_h)
+			frames.add_frame("portale" if idx < portal_frames else "gancio", atlas)
+			idx += 1
+
+	var sprite := AnimatedSprite2D.new()
+	sprite.name = "SecondaryChain"
+	sprite.sprite_frames = frames
+	# non centrato: l'origine (0,0) resta sul portale (in cima al foglio), cosi'
+	# la catena si allunga a partire da li' invece che dal centro del fotogramma
+	sprite.centered = false
+	sprite.offset = Vector2(-cell_w / 2.0, 0.0)
+	# il foglio e' ~cell_w x cell_h px: lo scaliamo perche' a piena estensione
+	# (asse Y locale, che dopo la rotazione diventa l'orizzontale) la catena
+	# arrivi esattamente a secondary_range, ed sia spessa secondary_height
+	sprite.scale = Vector2(secondary_height / cell_w, secondary_range / cell_h)
+	sprite.visible = false
+	sprite.z_index = -1  # dietro al personaggio, come la Chain di iacopo
+	return sprite
+
+
+# Costruisce la hitbox (bassa e lunga) dell'attacco secondario, copiando lo
+# stesso template usato per il pugno (cosi' eredita layer/mask corretti) e
+# sostituendone solo la forma. Resta disabilitata finche' non si colpisce
+# (vedi _fire_secondary_attack / _process_secondary_attack).
+func _build_secondary_hitbox() -> Hitbox:
+	var cfg: ConfigFile = _get_cfg()
+	var template_path: String = str(cfg.get_value("base", "hitbox_template_node", "TRAB_Sprite2D/PunchHitbox"))
+	var template: Node = get_node_or_null(template_path)
+	if not (template is Hitbox):
+		push_warning("hitbox_template_node '%s' non trovata: %s non avra' l'attacco secondario" % [template_path, fighter_name])
+		return null
+
+	var hitbox: Hitbox = template.duplicate()
+	hitbox.name = "SecondaryHitbox"
+	add_child(hitbox)
+	hitbox.damage = secondary_damage
+	hitbox.source = self
+
+	var shape_node: CollisionShape2D = hitbox.get_node("CollisionShape2D")
+	shape_node.position = Vector2.ZERO
+	var new_shape := RectangleShape2D.new()
+	new_shape.size = Vector2(secondary_range, secondary_height)
+	shape_node.shape = new_shape
+	shape_node.disabled = true
+
+	return hitbox
+
+
 # Come _stat(), ma per un personaggio qualsiasi (non necessariamente quello
 # di questa istanza) - usata quando serve leggere dati prima che fighter_name
 # sia impostato per il personaggio in questione.
@@ -280,6 +388,19 @@ func _load_stats() -> void:
 
 	block_damage_reduction = clampf(float(_stat("block_damage_reduction", block_damage_reduction)), 0.0, 1.0)
 
+	has_secondary_attack = bool(_stat("secondary_attack", has_secondary_attack))
+	secondary_damage = int(_stat("secondary_damage", secondary_damage))
+	secondary_range = float(_stat("secondary_range", secondary_range))
+	secondary_height = float(_stat("secondary_height", secondary_height))
+	secondary_ground_offset = float(_stat("secondary_ground_offset", secondary_ground_offset))
+	secondary_release_delay = float(_stat("secondary_release_delay", secondary_release_delay))
+	secondary_hit_delay = float(_stat("secondary_hit_delay", secondary_hit_delay))
+	secondary_hit_window = float(_stat("secondary_hit_window", secondary_hit_window))
+	secondary_sheet = str(_stat("secondary_sheet", secondary_sheet))
+	secondary_sheet_hframes = int(_stat("secondary_sheet_hframes", secondary_sheet_hframes))
+	secondary_sheet_vframes = int(_stat("secondary_sheet_vframes", secondary_sheet_vframes))
+	secondary_portal_frames = int(_stat("secondary_portal_frames", secondary_portal_frames))
+
 
 func _ready() -> void:
 	hurtbox.damaged.connect(_on_damaged)
@@ -306,6 +427,12 @@ func _ready() -> void:
 	chain_sprite.visible = false
 	chain_base_x = chain_sprite.position.x
 	chain_sprite.animation_finished.connect(_on_chain_animation_finished)
+
+	if has_secondary_attack:
+		_secondary_sprite = _build_secondary_sprite()
+		if _secondary_sprite:
+			add_child(_secondary_sprite)
+		_secondary_hitbox = _build_secondary_hitbox()
 
 	current_sprite = _sprites[fighter_name]
 	current_sprite.visible = true
@@ -419,6 +546,86 @@ func _block_pressed() -> bool:
 			return Input.is_joy_button_pressed(device_id, JOY_BUTTON_X)
 
 
+# Macchina a stati dell'attacco secondario (portale -> gancio), avanzata ogni
+# frame da _physics_process solo per chi ha has_secondary_attack = true:
+#   IDLE    -> tasto premuto: appare il "portale" (loop) e resta finche' non si rilascia
+#   CHARGE  -> tasto rilasciato: si passa a WAIT
+#   WAIT    -> dopo secondary_release_delay secondi, la direzione viene fissata
+#              e parte l'animazione "gancio"
+#   REACH   -> la catena si sta ancora allungando: dopo secondary_hit_delay
+#              secondi la hitbox si attiva (piena estensione)
+#   STRIKE  -> la hitbox resta attiva per secondary_hit_window secondi, poi si disattiva
+#   COOLDOWN-> si aspetta che l'animazione "gancio" finisca del tutto prima di
+#              tornare a IDLE (portale nascosto, si puo' ricaricare)
+func _process_secondary_attack(delta: float) -> void:
+	if _secondary_sprite == null:
+		return
+
+	var held: bool = _block_pressed()
+
+	match _sec_state:
+		SecondaryState.IDLE:
+			if held and not isAttacking and is_on_floor():
+				_sec_state = SecondaryState.CHARGE
+				_secondary_sprite.visible = true
+				_secondary_sprite.play("portale")
+				_update_secondary_facing()
+
+		SecondaryState.CHARGE:
+			_update_secondary_facing()
+			if not held:
+				_sec_state = SecondaryState.WAIT
+				_sec_timer = secondary_release_delay
+
+		SecondaryState.WAIT:
+			_update_secondary_facing()
+			_sec_timer -= delta
+			if _sec_timer <= 0.0:
+				_sec_state = SecondaryState.REACH
+				_sec_timer = secondary_hit_delay
+				_fire_secondary_attack()
+
+		SecondaryState.REACH:
+			_sec_timer -= delta
+			if _sec_timer <= 0.0:
+				_sec_state = SecondaryState.STRIKE
+				_sec_timer = secondary_hit_window
+				if _secondary_hitbox:
+					_secondary_hitbox.reset_hits()
+					_set_hitbox_disabled(_secondary_hitbox, false)
+
+		SecondaryState.STRIKE:
+			_sec_timer -= delta
+			if _sec_timer <= 0.0:
+				if _secondary_hitbox:
+					_set_hitbox_disabled(_secondary_hitbox, true)
+				_sec_state = SecondaryState.COOLDOWN
+
+		SecondaryState.COOLDOWN:
+			if not _secondary_sprite.is_playing():
+				_sec_state = SecondaryState.IDLE
+				_secondary_sprite.visible = false
+
+
+# Aggiorna la rotazione del portale in base a dove guarda il personaggio
+# (chiamata durante CHARGE/WAIT: se ci si gira, il portale segue; una volta
+# lanciato il gancio la direzione resta fissa, vedi _fire_secondary_attack)
+func _update_secondary_facing() -> void:
+	_secondary_sprite.position = Vector2(0.0, secondary_ground_offset)
+	_secondary_sprite.rotation_degrees = 90.0 if current_sprite.flip_h else -90.0
+
+
+# Fissa la direzione, fa partire l'animazione "gancio" e posiziona la hitbox
+# (bassa e lunga quanto secondary_range) dal personaggio verso quella direzione.
+func _fire_secondary_attack() -> void:
+	_update_secondary_facing()
+	_secondary_sprite.play("gancio")
+
+	if _secondary_hitbox:
+		var facing_sign: float = -1.0 if current_sprite.flip_h else 1.0
+		_secondary_hitbox.position = Vector2(facing_sign * secondary_range / 2.0, secondary_ground_offset)
+
+
 func _physics_process(delta: float) -> void:
 	if not is_on_floor():
 		velocity += get_gravity() * delta
@@ -434,9 +641,19 @@ func _physics_process(delta: float) -> void:
 
 	# blocco: tenendo "secondary" fermi, non si può attaccare né saltare
 	# (non si può iniziare a bloccare a metà di un attacco)
-	is_blocking = _block_pressed() and is_on_floor() and not isAttacking
+	# chi ha un attacco secondario dedicato (es. iacopo) non blocca: quel
+	# tasto carica/lancia la sua mossa (vedi _process_secondary_attack)
+	if has_secondary_attack:
+		is_blocking = false
+		_process_secondary_attack(delta)
+	else:
+		is_blocking = _block_pressed() and is_on_floor() and not isAttacking
 
-	if not is_blocking:
+	# mentre carica/lancia l'attacco secondario non si puo' saltare ne' tirare
+	# il pugno normale (evita di sovrapporre due mosse contemporaneamente)
+	var secondary_locked: bool = has_secondary_attack and _sec_state != SecondaryState.IDLE
+
+	if not is_blocking and not secondary_locked:
 		if _jump_just_pressed() and is_on_floor():
 			velocity.y = jump_velocity
 
@@ -543,6 +760,7 @@ func _play_hit_feedback(source: Node, blocked: bool) -> void:
 		hurt_stun_left = hit_stun_duration
 		isHurt = true
 		_cancel_attack()  # il colpo subito interrompe il pugno in corso
+		_cancel_secondary_attack()  # ...e anche l'eventuale portale/gancio di iacopo
 		_play_hurt_animation()
 
 	_flash_sprite()
@@ -564,6 +782,19 @@ func _cancel_attack() -> void:
 	if chain_sprite.visible:
 		chain_sprite.stop()
 		chain_sprite.visible = false
+
+
+# Interrompe portale/gancio in corso (a qualunque punto della macchina a stati)
+func _cancel_secondary_attack() -> void:
+	if not has_secondary_attack or _sec_state == SecondaryState.IDLE:
+		return
+	_sec_state = SecondaryState.IDLE
+	_sec_timer = 0.0
+	if _secondary_sprite:
+		_secondary_sprite.stop()
+		_secondary_sprite.visible = false
+	if _secondary_hitbox:
+		_set_hitbox_disabled(_secondary_hitbox, true)
 
 
 # Animazione "hurt": se lo sprite del personaggio non ce l'ha ancora, viene saltata
