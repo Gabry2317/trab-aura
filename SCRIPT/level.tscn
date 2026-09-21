@@ -7,7 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://8op4kve3x2dj" path="res://sprite/map/hell/ChatGPT Image 21 set 2026, 17_11_34.png" id="3_km5ld"]
 [ext_resource type="PackedScene" path="res://fine_partita.tscn" id="7_km5ld"]
 [ext_resource type="AudioStream" uid="uid://cvxc68pr2ya60" path="res://sound/Music/Seve me (A7X).mp3" id="7_n6hdu"]
-[ext_resource type="Script" path="res://healt_bar.gd" id="8_healthbar"]
+[ext_resource type="Script" uid="uid://def4douxfq3ly" path="res://SCRIPT/healt_bar.gd" id="8_healthbar"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_i2t4f"]
 texture = ExtResource("3_km5ld")

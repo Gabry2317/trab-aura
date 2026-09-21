@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://cunan1qumpil6" path="res://sprite/UI/360_F_1977410715_JXhswK9bVHycE8kXWnPnSIJJOR2jrP4I (2).png" id="1_mae5d"]
 [ext_resource type="Script" uid="uid://c1ktuhqofw3w4" path="res://SCRIPT/toselect.gd" id="2_ouk20"]
 [ext_resource type="Script" uid="uid://ctolt6a40dofx" path="res://SCRIPT/quit.gd" id="3_mae5d"]
-[ext_resource type="Script" path="res://SCRIPT/apri_impostazioni.gd" id="4_impo1"]
+[ext_resource type="Script" uid="uid://dg2ewf6okwn4n" path="res://SCRIPT/apri_impostazioni.gd" id="4_impo1"]
 
 [node name="Node2D" type="Node2D" unique_id=1696016993]
 
@@ -26,8 +26,8 @@ offset_left = 540.0
 offset_top = 470.0
 offset_right = 736.0
 offset_bottom = 518.0
-text = "Esci"
 theme_override_font_sizes/font_size = 22
+text = "Esci"
 script = ExtResource("3_mae5d")
 
 [node name="IMPOSTAZIONI" type="Button" parent="." unique_id=2121970818]
@@ -35,6 +35,6 @@ offset_left = 490.0
 offset_top = 540.0
 offset_right = 786.0
 offset_bottom = 588.0
-text = "Impostazioni"
 theme_override_font_sizes/font_size = 22
+text = "Impostazioni"
 script = ExtResource("4_impo1")
