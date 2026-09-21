@@ -5102,7 +5102,7 @@ vertical_alignment = 1
 
 [node name="BarraVitaP1" type="ProgressBar" parent="HUD" unique_id=999000004]
 script = ExtResource("8_healthbar")
-player_id = 0
+player_path = NodePath("../../player")
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
@@ -5130,8 +5130,8 @@ text = "P1"
 
 [node name="BarraVitaP2" type="ProgressBar" parent="HUD" unique_id=999000006]
 script = ExtResource("8_healthbar")
-player_id = 1
-fill_mode = 1
+player_path = NodePath("../../player2")
+fill_mode = 2
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5

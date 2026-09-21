@@ -3,7 +3,7 @@ extends Node
 @onready var fine_partita = $FinePartita
 @onready var label_timer: Label = $HUD/PannelloTimer/LabelTimer
 
-const TEMPO_ROUND: float = 60.0
+const TEMPO_ROUND: float = 300.0
 
 var partita_finita: bool = false
 var tempo_rimasto: float = TEMPO_ROUND

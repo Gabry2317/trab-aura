@@ -3,6 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://c3whyq78sh2tc" path="res://sprite/Player/WND_trab/idle/WND_trab_idle000.png" id="1_bfour"]
 [ext_resource type="Script" uid="uid://c3csinjlkj8kl" path="res://SCRIPT/player.gd" id="1_rvj5e"]
 [ext_resource type="Texture2D" uid="uid://by24qgu42hunh" path="res://sprite/Player/WND_trab/idle/WND_trab_idle001.png" id="2_8gr2b"]
+[ext_resource type="Texture2D" uid="uid://0qglkx8ao2vl" path="res://sprite/Player/WND_trab/Damage.png" id="3_bs25f"]
 [ext_resource type="Texture2D" uid="uid://c834leeej4vu6" path="res://sprite/Player/WND_trab/idle/WND_trab_idle002.png" id="3_vl8ci"]
 [ext_resource type="Texture2D" uid="uid://bw8m211ylv4bf" path="res://sprite/Player/WND_trab/pugno/trab-punch.png" id="4_coqba"]
 [ext_resource type="Texture2D" uid="uid://demxj7gda0kni" path="res://sprite/Player/WND_trab/idle/WND_trab_idle003.png" id="4_ieltc"]
@@ -124,22 +125,21 @@
 [ext_resource type="Texture2D" uid="uid://ni1s7qdup608" path="res://sprite/Player/Iacobisio/walk/Bisio_walk022.png" id="94_hwvvw"]
 [ext_resource type="Texture2D" uid="uid://dbdci2nqes6sb" path="res://sprite/Player/WND_trab/testata/mr aura-hurt.png" id="100_jtuq4"]
 [ext_resource type="Texture2D" uid="uid://bgkvlgmmduo6u" path="res://sprite/Player/Iacobisio/jump/iacopo-bisio-jump.png" id="101_j50wv"]
-[ext_resource type="Texture2D" uid="uid://ciasphyiqgrvt" path="res://sprite/UI/bar_empty.png" id="120_avvbj"]
-[ext_resource type="Texture2D" uid="uid://im810oa7cjq3" path="res://sprite/UI/bar_full.png" id="121_jtuq4"]
-[ext_resource type="Script" uid="uid://chdu580l1u8r2" path="res://SCRIPT/healt_bar.gd" id="122_j50wv"]
 [ext_resource type="Texture2D" uid="uid://d1442vpr1sm0b" path="res://sprite/Player/Nakakata/punc/nakakata-punch.png" id="125_1waqe"]
 [ext_resource type="Texture2D" uid="uid://dnppxibgnhitf" path="res://sprite/Player/Nakakata/idle/NAKAKATYA-idle-trimmed.png" id="126_coqba"]
 [ext_resource type="Texture2D" uid="uid://qrvqfwvoatbs" path="res://sprite/Player/Iacobisio/chain/ChatGPT Image 17 set 2026, 13_20_40.png" id="126_crkag"]
 [ext_resource type="Texture2D" uid="uid://cpvpvs3lmy4ip" path="res://sprite/Player/Nakakata/run/NAKAKATYA-run-trimmed.png" id="127_crkag"]
 [ext_resource type="Texture2D" uid="uid://dde15vymb0vqq" path="res://sprite/Player/Nakakata/walk/nakakata-walk-trimmed.png" id="128_fdapt"]
+[ext_resource type="Texture2D" uid="uid://hikp6jhw5wwn" path="res://sprite/Player/Nakakata/Damage.png" id="128_q0umt"]
 [ext_resource type="Script" uid="uid://dmq8gbbsrlmtp" path="res://SCRIPT/hurtbox.gd" id="133_agdh1"]
-[ext_resource type="Texture2D" uid="uid://cbkx70is3wjeo" path="res://sprite/Player/Andrix/hit/andrix-attack.png" id="133_bs25f"]
+[ext_resource type="Texture2D" uid="uid://bhryoge136mid" path="res://sprite/Player/Andrix/hit/andrix-attack-idle-size.png" id="133_bs25f"]
+[ext_resource type="Texture2D" uid="uid://c5vp85o0aqjap" path="res://sprite/Player/Andrix/Damage.png" id="133_kup7x"]
 [ext_resource type="Texture2D" uid="uid://yb7uf4hboodw" path="res://sprite/Player/Andrix/idle/andrix-idle-trimmed.png" id="134_q0umt"]
 [ext_resource type="Texture2D" uid="uid://jc2nibe2wyo4" path="res://sprite/Player/Andrix/run/andrix-run-trimmed.png" id="135_kup7x"]
 [ext_resource type="Texture2D" uid="uid://dccnr7qwai8ha" path="res://sprite/Player/Andrix/walk/andrix-walk-trimmed.png" id="136_hwvvw"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fdm2o"]
-size = Vector2(53, 186)
+size = Vector2(53, 165)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_asfhf"]
 atlas = ExtResource("4_coqba")
@@ -394,6 +394,14 @@ animations = [{
 "loop": 0,
 "name": &"hit",
 "speed": 15.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_bs25f")
+}],
+"loop": 1,
+"name": &"hurt",
+"speed": 1.5
 }, {
 "frames": [{
 "duration": 1.0,
@@ -1555,6 +1563,14 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": ExtResource("128_q0umt")
+}],
+"loop": 0,
+"name": &"hurt",
+"speed": 1.5
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_c71sb")
 }, {
 "duration": 1.0,
@@ -2110,6 +2126,14 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": ExtResource("133_kup7x")
+}],
+"loop": 1,
+"name": &"hurt",
+"speed": 1.5
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_fhdqk")
 }, {
 "duration": 1.0,
@@ -2284,23 +2308,14 @@ size = Vector2(59, 185)
 script = ExtResource("1_rvj5e")
 
 [node name="collision" type="CollisionShape2D" parent="." unique_id=1003530983]
-position = Vector2(-3.5, 6)
+position = Vector2(-3.5, -4.5)
 shape = SubResource("RectangleShape2D_fdm2o")
-
-[node name="TextureProgressBar" type="TextureProgressBar" parent="collision" unique_id=267345931 node_paths=PackedStringArray("player")]
-offset_left = -66.5
-offset_top = -139.0
-offset_right = 61.5
-offset_bottom = -75.0
-texture_under = ExtResource("120_avvbj")
-texture_progress = ExtResource("121_jtuq4")
-script = ExtResource("122_j50wv")
-player = NodePath("../..")
 
 [node name="TRAB_Sprite2D" type="AnimatedSprite2D" parent="." unique_id=78545633]
 visible = false
+position = Vector2(-2, 6)
 sprite_frames = SubResource("SpriteFrames_hjp0y")
-animation = &"idle"
+animation = &"hurt"
 autoplay = "idle"
 
 [node name="PunchHitbox" type="Area2D" parent="TRAB_Sprite2D" unique_id=1603874996]
@@ -2312,8 +2327,7 @@ shape = SubResource("RectangleShape2D_hjp0y")
 disabled = true
 
 [node name="Iaco_Spto" type="AnimatedSprite2D" parent="." unique_id=212009970]
-visible = false
-position = Vector2(-1, -9)
+position = Vector2(-2, -6)
 scale = Vector2(1.1132813, 1.1132813)
 sprite_frames = SubResource("SpriteFrames_fdm2o")
 animation = &"idle"
@@ -2339,8 +2353,8 @@ disabled = true
 
 [node name="Naka_Sprite" type="AnimatedSprite2D" parent="." unique_id=339889666]
 visible = false
-position = Vector2(3, 2.1249952)
-scale = Vector2(0.7421875, 0.93652344)
+position = Vector2(6.0000005, 0)
+scale = Vector2(0.78936976, 0.86279297)
 sprite_frames = SubResource("SpriteFrames_3c2fn")
 animation = &"hit"
 autoplay = "idle"
@@ -2357,7 +2371,8 @@ shape = SubResource("RectangleShape2D_d5qys")
 disabled = true
 
 [node name="andrix_Sprite" type="AnimatedSprite2D" parent="." unique_id=510414712]
-position = Vector2(-2.000001, -5)
+visible = false
+position = Vector2(-2.842171e-14, -4)
 scale = Vector2(1.201172, 1.1110841)
 sprite_frames = SubResource("SpriteFrames_u840f")
 animation = &"idle"
@@ -2373,6 +2388,7 @@ shape = SubResource("RectangleShape2D_d5qys")
 disabled = true
 
 [node name="Hurtbox" type="Area2D" parent="." unique_id=8138055]
+visible = false
 script = ExtResource("133_agdh1")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox" unique_id=252264326]

@@ -1,9 +1,13 @@
+res://sprite/Player/Andrix/
+res://sprite/Player/WND_trab/
+res://SCRIPT/
+res://sprite/map/hell/
+res://sprite/Player/Andrix/win/
+res://sprite/Player/Andrix/hit/
 res://sprite/Player/Andrix/walk/
 res://sprite/Player/Andrix/run/
 res://sprite/Player/Andrix/idle/
-res://sprite/Player/Andrix/hit/
 res://
-res://SCRIPT/
 res://sprite/Player/Iacobisio/chain/
 res://sprite/Player/WND_trab/pugno/
 res://sprite/Player/Nakakata/block/
@@ -16,5 +20,3 @@ res://sprite/Player/WND_trab/testata/
 res://sprite/Player/WND_trab/run/
 res://sprite/Player/WND_trab/walk/
 res://sprite/Player/WND_trab/idle/
-res://sprite/map/
-res://sprite/Player/WND_trab/

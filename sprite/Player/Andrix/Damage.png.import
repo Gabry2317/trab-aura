@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cltculqng4y3l"
-path="res://.godot/imported/tile.png-38531923a9c8e8132bd549b07b7e855f.ctex"
+uid="uid://c5vp85o0aqjap"
+path="res://.godot/imported/Damage.png-3e52bd9d34bb609b09bad45f5741f15c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprite/map/tile.png"
-dest_files=["res://.godot/imported/tile.png-38531923a9c8e8132bd549b07b7e855f.ctex"]
+source_file="res://sprite/Player/Andrix/Damage.png"
+dest_files=["res://.godot/imported/Damage.png-3e52bd9d34bb609b09bad45f5741f15c.ctex"]
 
 [params]
 

@@ -23,6 +23,13 @@ var hit_flash_duration: float = 0.12   # per quanti secondi lo sprite resta colo
 var hit_flash_color: Color = Color(1.0, 0.35, 0.35, 1.0)  # colore del lampo (default: rossastro)
 var hit_sound: AudioStream = null      # caricato da hit_sound in fighters.cfg
 
+# --- sangue quando si prende danno (vedi _spawn_blood) ---
+var blood_amount: int = 18             # quante particelle per colpo (0 = nessun sangue)
+var blood_color: Color = Color(0.75, 0.03, 0.03, 1.0)
+var blood_lifetime: float = 0.6        # durata delle particelle (secondi)
+var blood_speed_min: float = 60.0
+var blood_speed_max: float = 180.0
+
 # --- blocco (guardia): tasti p1_secondary / p2_secondary ---
 var block_damage_reduction: float = 0.3  # % di danno ancora subita mentre si blocca (0 = blocco perfetto)
 
@@ -67,6 +74,15 @@ var _hitboxes: Dictionary = {}
 var current_sprite: AnimatedSprite2D
 var current_hitbox: Hitbox
 var chain_base_x: float
+
+# --- dimensioni sprite ---
+# scala dello sprite cosi' come e' impostata nella scena (WND_trab.tscn):
+# e' il riferimento, model_scale di fighters.cfg la moltiplica soltanto
+var _base_scale: Vector2 = Vector2.ONE
+var _model_scale: float = 1.0
+# altezza (px) del fotogramma idle: tutte le altre animazioni vengono
+# riscalate per apparire grandi quanto l'idle
+var _idle_frame_height: float = 0.0
 var current_hitbox_shape: CollisionShape2D  # shape della hitbox attiva (viene specchiata)
 var hitbox_base_x: float  # X originale della shape (in editor)
 
@@ -132,7 +148,7 @@ func _build_dynamic_sprite(fighter: String, node_name: String) -> AnimatedSprite
 	var frames := SpriteFrames.new()
 	frames.remove_animation("default")
 
-	for anim in ["idle", "walk", "run", "hit"]:
+	for anim in ["idle", "walk", "run", "hit", "hurt"]:
 		var sheet_path: String = cfg.get_value(fighter, "model_sheet_%s" % anim, "")
 		if sheet_path == "":
 			continue  # questo personaggio non ha un foglio per questa animazione
@@ -143,7 +159,7 @@ func _build_dynamic_sprite(fighter: String, node_name: String) -> AnimatedSprite
 		var frame_count: int = int(cfg.get_value(fighter, "model_frames_%s" % anim, hframes * vframes))
 
 		frames.add_animation(anim)
-		frames.set_animation_loop(anim, anim != "hit")  # "hit" non va in loop
+		frames.set_animation_loop(anim, anim != "hit" and anim != "hurt")  # "hit" e "hurt" non vanno in loop
 		frames.set_animation_speed(anim, 10.0)
 
 		var added: int = 0
@@ -256,6 +272,12 @@ func _load_stats() -> void:
 	var hit_sound_path: String = str(_stat("hit_sound", ""))
 	hit_sound = load(hit_sound_path) if hit_sound_path != "" else null
 
+	blood_amount = int(_stat("blood_amount", blood_amount))
+	blood_color = _stat("blood_color", blood_color)
+	blood_lifetime = float(_stat("blood_lifetime", blood_lifetime))
+	blood_speed_min = float(_stat("blood_speed_min", blood_speed_min))
+	blood_speed_max = float(_stat("blood_speed_max", blood_speed_max))
+
 	block_damage_reduction = clampf(float(_stat("block_damage_reduction", block_damage_reduction)), 0.0, 1.0)
 
 
@@ -292,13 +314,43 @@ func _ready() -> void:
 	current_hitbox_shape = current_hitbox.get_node("CollisionShape2D")
 	hitbox_base_x = current_hitbox_shape.position.x
 
-	# model_scale in fighters.cfg permette di rimpicciolire/ingrandire lo sprite
-	# senza toccare la scena (la hitbox resta invariata: aggiustarla a mano se serve)
-	var model_scale: float = float(_stat("model_scale", 1.0))
-	current_sprite.scale = Vector2.ONE * model_scale
+	# la scala impostata in scena (es. Naka 0.74 x 0.94, Andrix 1.2 x 1.11) va
+	# mantenuta: model_scale in fighters.cfg la moltiplica (1.0 = misura della scena).
+	# In piu' ogni animazione viene portata alla stessa dimensione dell'idle.
+	_base_scale = current_sprite.scale
+	_model_scale = float(_stat("model_scale", 1.0))
+	_idle_frame_height = _get_frame_height(current_sprite, &"idle", 0)
+	current_sprite.animation_changed.connect(_update_sprite_scale)
+	current_sprite.frame_changed.connect(_update_sprite_scale)
+	_update_sprite_scale()
 
 	# il player 2 parte specchiato: guarda a sinistra, verso il player 1
 	_set_facing(player_id == 1)
+
+
+# Altezza in pixel di un fotogramma di un'animazione (0.0 se non esiste)
+func _get_frame_height(sprite: AnimatedSprite2D, anim: StringName, frame: int) -> float:
+	var frames: SpriteFrames = sprite.sprite_frames
+	if frames == null or not frames.has_animation(anim):
+		return 0.0
+	if frame < 0 or frame >= frames.get_frame_count(anim):
+		return 0.0
+	var tex: Texture2D = frames.get_frame_texture(anim, frame)
+	return tex.get_size().y if tex != null else 0.0
+
+
+# Scala dello sprite = scala della scena * model_scale * (altezza idle / altezza
+# del fotogramma attuale): cosi' walk, run, hit... hanno la stessa grandezza dell'idle
+func _update_sprite_scale() -> void:
+	var factor: float = 1.0
+	var frame_h: float = _get_frame_height(current_sprite, current_sprite.animation, current_sprite.frame)
+	if frame_h > 0.0 and _idle_frame_height > 0.0:
+		factor = _idle_frame_height / frame_h
+	current_sprite.scale = _base_scale * _model_scale * factor
+	# la hitbox e' figlia dello sprite: compensa il fattore cosi' la portata del
+	# pugno non cambia quando cambia il fotogramma
+	if current_hitbox != null:
+		current_hitbox.scale = Vector2.ONE / factor
 
 
 func _set_hitbox_disabled(hitbox: Hitbox, value: bool) -> void:
@@ -479,21 +531,84 @@ func _on_damaged(amount: int, source: Node) -> void:
 # Rinculo + stordimento breve + lampo sullo sprite + suono d'impatto.
 # Se il colpo e' stato bloccato: rinculo ridotto e niente stordimento.
 func _play_hit_feedback(source: Node, blocked: bool) -> void:
+	# direzione della spinta = lontano da chi ha colpito
+	var push_dir: float = 1.0 if current_sprite.flip_h else -1.0
 	if source is Node2D:
-		var push_dir: float = signf(global_position.x - source.global_position.x)
-		if push_dir == 0.0:
-			push_dir = 1.0 if current_sprite.flip_h else -1.0
+		var d: float = signf(global_position.x - source.global_position.x)
+		if d != 0.0:
+			push_dir = d
 		velocity.x = push_dir * hit_knockback * (0.4 if blocked else 1.0)
 
 	if not blocked:
 		hurt_stun_left = hit_stun_duration
 		isHurt = true
+		_cancel_attack()  # il colpo subito interrompe il pugno in corso
+		_play_hurt_animation()
 
 	_flash_sprite()
+	_spawn_blood(push_dir, blocked)
 
 	if hit_sound:
 		hit_sfx.stream = hit_sound
 		hit_sfx.play()
+
+
+# Interrompe l'attacco in corso (senza questo, se "hurt" sostituisce l'animazione
+# "hit" a meta', animation_finished non arriva e isAttacking resterebbe true per sempre)
+func _cancel_attack() -> void:
+	if not isAttacking:
+		return
+	isAttacking = false
+	hitbox_delay_left = 0.0
+	_set_hitbox_disabled(current_hitbox, true)
+	if chain_sprite.visible:
+		chain_sprite.stop()
+		chain_sprite.visible = false
+
+
+# Animazione "hurt": se lo sprite del personaggio non ce l'ha ancora, viene saltata
+# (resta il lampo rosso) senza errori
+func _play_hurt_animation() -> void:
+	var frames: SpriteFrames = current_sprite.sprite_frames
+	if frames == null or not frames.has_animation("hurt"):
+		return
+	current_sprite.stop()  # riparte da capo anche se si viene colpiti di nuovo
+	current_sprite.play("hurt")
+
+
+# Schizzi di sangue: particelle rosse che partono dal punto colpito, spinte via
+# da chi ha colpito e poi cadono per gravita'. Bloccando ne escono meno.
+func _spawn_blood(push_dir: float, blocked: bool) -> void:
+	if blood_amount <= 0:
+		return
+	var amount: int = maxi(int(round(blood_amount * (0.3 if blocked else 1.0))), 1)
+
+	var p := CPUParticles2D.new()
+	p.emitting = false
+	p.one_shot = true
+	p.explosiveness = 1.0
+	p.amount = amount
+	p.lifetime = blood_lifetime
+	p.local_coords = false  # le particelle restano nel mondo, non seguono il player
+	p.direction = Vector2(push_dir, -0.6)
+	p.spread = 55.0
+	p.initial_velocity_min = blood_speed_min
+	p.initial_velocity_max = blood_speed_max
+	p.gravity = Vector2(0, 600)
+	p.scale_amount_min = 1.5
+	p.scale_amount_max = 3.5
+	p.color = blood_color
+	var fade := Gradient.new()
+	fade.set_color(0, Color(1, 1, 1, 1))
+	fade.set_color(1, Color(1, 1, 1, 0))
+	p.color_ramp = fade
+	p.z_index = 10
+
+	# aggiunta alla scena (non al player) cosi' non viene girata/scalata con lo sprite
+	get_parent().add_child(p)
+	p.global_position = hurtbox.global_position  # punto colpito (torace)
+	p.restart()
+	get_tree().create_timer(blood_lifetime + 0.2).timeout.connect(p.queue_free)
 
 
 func _flash_sprite() -> void:
