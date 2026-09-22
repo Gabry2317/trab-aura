@@ -474,12 +474,6 @@ func _set_facing(left: bool) -> void:
 	current_hitbox_shape.position.x = -abs(hitbox_base_x) if left else abs(hitbox_base_x)
 
 
-# Direzione orizzontale (-1..1) letta dal dispositivo di questo player: usata
-# anche dai poteri (es. per mirare il pointer dell'attacco caricato di Bisio)
-func get_input_direction() -> float:
-	return _get_direction()
-
-
 # --- NUOVO: helper di input, isolati per device_id ---
 func _get_direction() -> float:
 	match device_id:

@@ -4,16 +4,19 @@ extends "res://SCRIPT/powers/chain_power.gd"
 #
 #  - tocco veloce (sotto charge_time)  -> catena veloce (ereditata da chain_power.gd)
 #  - tenuto premuto oltre charge_time  -> nasce un pointer trasparente
-#    (pointer_sheet) che segue l'input orizzontale del player; rilasciando
-#    il tasto il pointer sparisce e al suo posto nasce una colonna
-#    (big_chain) che danneggia chi tocca e resta li' come area denial per
-#    column_duration secondi, colpendo di nuovo chi rimane dentro ogni
-#    column_tick_interval. Se il pointer si allontana troppo dal player
-#    (pointer_max_distance) la carica si annulla da sola, senza colonna.
+#    (pointer_sheet) che avanza da solo (non e' controllabile dal player)
+#    nella direzione in cui il player guardava all'inizio della carica;
+#    rilasciando il tasto il pointer sparisce e al suo posto nasce una
+#    colonna (big_chain) che danneggia chi tocca e resta li' come area
+#    denial per column_duration secondi, colpendo di nuovo chi rimane
+#    dentro ogni column_tick_interval. Se il pointer avanza troppo senza
+#    che il tasto venga rilasciato (pointer_max_distance) la carica si
+#    annulla da sola, senza colonna.
 
-var _pointer: Sprite2D = null    # catena trasparente che segue la mira durante la carica
+var _pointer: Sprite2D = null    # catena trasparente che avanza durante la carica
 var _pointer_x: float = 0.0      # posizione (mondo, X) del pointer durante la carica
-var _charging: bool = false      # true mentre il player tiene premuto e mira
+var _charge_dir: float = 1.0     # direzione (fissa) in cui il pointer avanza, presa a inizio carica
+var _charging: bool = false      # true mentre il player tiene premuto e il pointer avanza
 var _columns: Array = []         # colonne big_chain attive (area denial in corso)
 
 
@@ -23,28 +26,32 @@ func default_params() -> Dictionary:
 		# --- soglia di carica ---
 		"charge_time": 0.5,           # secondi da tenere premuto prima che parta la carica
 
-		# --- pointer (mira) ---
+		# --- pointer (mira automatica, non controllabile) ---
 		"pointer_sheet": "res://sprite/Player/Iacobisio/Secondary/pointer.png",  # catena trasparente di mira
-		"pointer_alpha": 1,        # trasparenza del pointer (0-1)
-		"pointer_height_ratio": 1,  # altezza del pointer rispetto al player
+		"pointer_alpha": 0.55,        # trasparenza del pointer (0-1)
+		"pointer_height_ratio": 0.3,  # altezza del pointer rispetto al player
 		"pointer_start_x": 40.0,      # distanza orizzontale dal player a cui nasce il pointer
 		"pointer_feet_y": 70.0,       # quota dei piedi del pointer rispetto all'origine del player
-		"pointer_speed": 300.0,       # px/s: velocita' con cui si sposta il pointer mentre si mira
-		"pointer_max_distance": 500.0,  # oltre questa distanza dal player la carica si annulla
+		"pointer_speed": 300.0,       # px/s: velocita' a cui il pointer avanza da solo mentre si carica
+		"pointer_max_distance": 500.0,  # oltre questa distanza percorsa la carica si annulla da sola
 
 		# --- colonna (big_chain, area denial) ---
-		"column_sheet": "res://sprite/Player/Iacobisio/Secondary/big_chains.png",  # foglio della colonna
-		"column_hframes": 7,          # colonne del foglio della colonna
-		"column_vframes": 2,          # righe del foglio della colonna
-		"column_frames": 14,          # fotogrammi usati per l'animazione di comparsa
-		"column_fps": 24.0,           # velocita' dell'animazione di comparsa della colonna
+		"column_sheet": "res://sprite/Player/Iacobisio/Secondary/big_chains.png",  # foglio dedicato della colonna (rune + catena)
+		"column_hframes": 7,          # colonne del foglio (7x2 = 14 fotogrammi)
+		"column_vframes": 2,          # righe del foglio
+		"column_frames": -1,          # fotogrammi da usare; -1 = tutti quelli del foglio (hframes*vframes)
+		"column_fps": 20.0,           # velocita' di crescita/ritiro della colonna
 		"column_height_ratio": 1.4,   # altezza della colonna rispetto al player
+		"column_feet_y": 70.0,        # quota dei piedi della colonna rispetto all'origine del player
+									  # (separata da pointer_feet_y: regola qui se il pilastro non tocca terra)
+		"column_hold_frame": -1,      # fotogramma (indice nel foglio) su cui la colonna resta ancorata
+									  # dopo la crescita, finche' dura l'area denial. -1 = automatico
+									  # (meta' foglio: col catena.png fornito e' il fotogramma "ancorata")
 		"column_hitbox_w": 0.7,       # larghezza hitbox della colonna (frazione della sprite)
 		"column_hitbox_h": 0.9,       # altezza hitbox della colonna (frazione della sprite)
 		"column_damage": 10,          # danno per ogni "tick" della colonna
 		"column_duration": 5.0,       # secondi in cui la colonna resta attiva (area denial)
 		"column_tick_interval": 0.4,  # ogni quanti secondi la colonna puo' colpire di nuovo chi resta dentro
-		"column_fade_out": 0.3,       # secondi di dissolvenza quando la colonna scompare
 		"column_hitbox_script": "res://SCRIPT/punch_hitbox_trab.gd",  # script della hitbox della colonna
 	}
 	for key in charge_params:
@@ -81,8 +88,8 @@ func start_charge() -> void:
 		return
 	_charging = true
 	player.velocity.x = 0.0
+	_charge_dir = player.get_facing_dir()  # fissata qui: il pointer non si controlla piu' dopo
 
-	var dir: float = player.get_facing_dir()
 	var sprite := Sprite2D.new()
 	sprite.name = "ChainPointer"
 	sprite.texture = tex
@@ -90,24 +97,24 @@ func start_charge() -> void:
 	sprite.offset = Vector2(-tex.get_size().x / 2.0, -tex.get_size().y)
 	var scale_factor: float = (player.get_visual_height() * float(params["pointer_height_ratio"])) / tex.get_size().y
 	sprite.scale = Vector2.ONE * scale_factor
-	sprite.flip_h = dir < 0.0
+	sprite.flip_h = _charge_dir < 0.0
 	sprite.modulate = Color(1.0, 1.0, 1.0, clampf(float(params["pointer_alpha"]), 0.0, 1.0))
 
 	player.get_parent().add_child(sprite)
 	_pointer = sprite
-	_pointer_x = player.global_position.x + dir * float(params["pointer_start_x"])
+	_pointer_x = player.global_position.x + _charge_dir * float(params["pointer_start_x"])
 	_update_pointer_position()
 
 
 # Chiamata ogni frame mentre "secondary" resta premuto dopo la soglia: il
-# pointer si sposta con l'input orizzontale del player (mira libera), ma se
-# si allontana troppo dal player la carica si annulla da sola
+# pointer avanza da solo (non e' controllabile) nella direzione fissata a
+# inizio carica; se percorre troppa strada senza essere rilasciato, la
+# carica si annulla da sola
 func update_charge(delta: float) -> void:
 	if not is_instance_valid(_pointer):
 		return
 
-	var input_dir: float = player.get_input_direction()
-	_pointer_x += input_dir * float(params["pointer_speed"]) * delta
+	_pointer_x += _charge_dir * float(params["pointer_speed"]) * delta
 	_update_pointer_position()
 
 	var distance: float = absf(_pointer_x - player.global_position.x)
@@ -123,13 +130,13 @@ func _update_pointer_position() -> void:
 
 
 # Il player ha rilasciato "secondary" dopo aver caricato: il pointer sparisce
-# e al suo posto si abbatte la colonna (big_chain)
+# e al suo posto si abbatte la colonna (big_chain), a terra (column_feet_y)
 func release_charge() -> void:
 	if not _charging:
 		return
 	_charging = false
 	if is_instance_valid(_pointer):
-		var col_pos: Vector2 = _pointer.global_position
+		var col_pos: Vector2 = Vector2(_pointer_x, player.global_position.y + float(params["column_feet_y"]))
 		_despawn_pointer()
 		_spawn_column(col_pos)
 	cooldown_left = float(params["cooldown"])
@@ -148,9 +155,11 @@ func _despawn_pointer() -> void:
 	_pointer = null
 
 
-# Crea la colonna (big_chain) sul punto mirato: fa danno a chi tocca e resta
-# li' come area denial per column_duration secondi, colpendo di nuovo ogni
-# column_tick_interval chi rimane dentro
+# Crea la colonna (big_chain) sul punto mirato: cresce dal foglio dedicato
+# (rune + catena), resta ANCORATA sul fotogramma di column_hold_frame per
+# column_duration secondi facendo danno a chi tocca (area denial, con un
+# "tick" ogni column_tick_interval per chi resta dentro), poi si ritira
+# riproducendo il resto del foglio ed elimina la colonna.
 func _spawn_column(pos: Vector2) -> void:
 	var tex: Texture2D = load(str(params["column_sheet"]))
 	if tex == null:
@@ -159,6 +168,29 @@ func _spawn_column(pos: Vector2) -> void:
 
 	var hframes: int = int(params["column_hframes"])
 	var vframes: int = int(params["column_vframes"])
+	var fw: float = tex.get_size().x / hframes
+	var fh: float = tex.get_size().y / vframes
+
+	# affetta tutto il foglio in ordine (riga per riga, come _add_sliced_animation)
+	var atlases: Array = []
+	for row in range(vframes):
+		for col in range(hframes):
+			var atlas := AtlasTexture.new()
+			atlas.atlas = tex
+			atlas.region = Rect2(col * fw, row * fh, fw, fh)
+			atlases.append(atlas)
+
+	var total: int = int(params["column_frames"])
+	if total < 0 or total > atlases.size():
+		total = atlases.size()
+
+	# fotogramma su cui la colonna resta ferma (ancorata) durante l'area denial:
+	# -1 = automatico, a meta' foglio (dove il foglio fornito mostra la catena
+	# gia' formata e ancorata, prima di ritirarsi nella seconda meta')
+	var hold_frame: int = int(params["column_hold_frame"])
+	if hold_frame < 0:
+		hold_frame = total / 2
+	hold_frame = clampi(hold_frame, 0, total - 1)
 
 	var column = Area2D.new()  # senza tipo: damage/source arrivano dallo script assegnato sotto
 	column.name = "BigChainColumn"
@@ -170,9 +202,20 @@ func _spawn_column(pos: Vector2) -> void:
 
 	var frames := SpriteFrames.new()
 	frames.remove_animation("default")
-	_add_sliced_animation(frames, &"column", tex, hframes, vframes, int(params["column_frames"]), float(params["column_fps"]), false)
-	var fw: float = tex.get_size().x / hframes
-	var fh: float = tex.get_size().y / vframes
+	var fps: float = float(params["column_fps"])
+
+	frames.add_animation(&"grow")
+	frames.set_animation_loop(&"grow", false)
+	frames.set_animation_speed(&"grow", fps)
+	for i in range(hold_frame + 1):
+		frames.add_frame(&"grow", atlases[i])
+
+	frames.add_animation(&"retract")
+	frames.set_animation_loop(&"retract", false)
+	frames.set_animation_speed(&"retract", fps)
+	for i in range(hold_frame, total):
+		frames.add_frame(&"retract", atlases[i])
+
 	var col_scale: float = (player.get_visual_height() * float(params["column_height_ratio"])) / fh
 
 	var sprite := AnimatedSprite2D.new()
@@ -189,21 +232,54 @@ func _spawn_column(pos: Vector2) -> void:
 	shape.name = "CollisionShape2D"
 	shape.shape = rect
 	shape.position = Vector2(0.0, -rect.size.y / 2.0)
+	shape.disabled = true  # si accende solo a crescita finita (colonna ancorata)
 	column.add_child(shape)
 
 	player.get_parent().add_child(column)
 	column.global_position = pos
-	sprite.play(&"column")
 
-	if bool(params["debug"]):
-		print("[ChainCharged] colonna creata in ", pos)
-
-	_columns.append({
+	var entry: Dictionary = {
 		"node": column,
 		"shape": shape,
+		"formed": false,               # true da quando la colonna e' ancorata (fine di "grow")
+		"retracting": false,           # true da quando e' partito il ritiro (evita di rilanciarlo ogni frame)
 		"time_left": float(params["column_duration"]),
 		"tick_left": float(params["column_tick_interval"]),
-	})
+	}
+	_columns.append(entry)
+
+	# "grow" finita -> la colonna resta ferma sul fotogramma ancorato (comportamento
+	# di default di un'animazione non in loop) e la hitbox si accende: da qui parte
+	# davvero il conteggio dell'area denial. "retract" finita -> la colonna sparisce.
+	sprite.animation_finished.connect(func():
+		if sprite.animation == &"grow":
+			entry["formed"] = true
+			shape.disabled = false
+			if bool(params["debug"]):
+				print("[ChainCharged] colonna ancorata in ", pos)
+		elif sprite.animation == &"retract":
+			_columns.erase(entry)
+			column.queue_free()
+	)
+	sprite.play(&"grow")
+
+
+# Avvia il ritiro (riproduce il resto del foglio dal fotogramma ancorato in
+# poi); la colonna viene rimossa dal callback animation_finished di _spawn_column
+func _retract_column(entry: Dictionary) -> void:
+	var column: Area2D = entry["node"]
+	if not is_instance_valid(column):
+		_columns.erase(entry)
+		return
+	var shape: CollisionShape2D = entry["shape"]
+	if is_instance_valid(shape):
+		shape.set_deferred("disabled", true)
+	var sprite := column.get_node("Sprite") as AnimatedSprite2D
+	if is_instance_valid(sprite):
+		sprite.play(&"retract")
+	else:
+		_columns.erase(entry)
+		column.queue_free()
 
 
 # Riabilita per un istante la hitbox della colonna: forza il motore fisico a
@@ -222,26 +298,9 @@ func _retrigger_column_hits(column: Area2D, shape: CollisionShape2D) -> void:
 	)
 
 
-# Dissolvenza e rimozione della colonna a fine durata
-func _despawn_column(entry: Dictionary) -> void:
-	_columns.erase(entry)
-	var column: Area2D = entry["node"]
-	var shape: CollisionShape2D = entry["shape"]
-	if not is_instance_valid(column):
-		return
-	if is_instance_valid(shape):
-		shape.set_deferred("disabled", true)
-	var fade: float = float(params["column_fade_out"])
-	if fade <= 0.0:
-		column.queue_free()
-		return
-	var tween: Tween = column.create_tween()
-	tween.tween_property(column, "modulate:a", 0.0, fade)
-	tween.tween_callback(column.queue_free)
-
-
 # Oltre a far avanzare la catena veloce (classe base), fa "ticchettare" le
-# colonne big_chain attive e le rimuove a fine durata
+# colonne big_chain attive (solo una volta ancorate, cioe' a "grow" finita)
+# e avvia il ritiro a fine durata
 func _update_power(delta: float) -> void:
 	super._update_power(delta)
 
@@ -249,10 +308,13 @@ func _update_power(delta: float) -> void:
 		if not is_instance_valid(entry["node"]):
 			_columns.erase(entry)
 			continue
+		if not entry["formed"] or entry["retracting"]:
+			continue  # sta ancora crescendo, o il ritiro e' gia' partito: niente da fare qui
 		entry["time_left"] -= delta
 		entry["tick_left"] -= delta
 		if entry["tick_left"] <= 0.0:
 			entry["tick_left"] = float(params["column_tick_interval"])
 			_retrigger_column_hits(entry["node"], entry["shape"])
 		if entry["time_left"] <= 0.0:
-			_despawn_column(entry)
+			entry["retracting"] = true
+			_retract_column(entry)
