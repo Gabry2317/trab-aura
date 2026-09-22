@@ -20,9 +20,10 @@ var cooldown_left: float = 0.0
 
 
 # Settings del potere: nome -> valore di default. Ogni chiave qui e' una chiave
-# valida in [secondary] del .cfg. "cooldown" (secondi) e' gestito dalla base.
+# valida in [secondary] del .cfg. "cooldown" (secondi) e' gestito dalla base,
+# "stamina_cost" e "stamina_min" pure (vedi can_use()/use() sotto).
 func default_params() -> Dictionary:
-	return {"cooldown": 1.0}
+	return {"cooldown": 1.0, "stamina_cost": 0.0, "stamina_min": 0.0}
 
 
 func setup(owner_player, values: Dictionary) -> void:
@@ -36,14 +37,30 @@ func _on_setup() -> void:
 	pass
 
 
-# Il player puo' lanciare il potere adesso?
+# Il player puo' lanciare il potere adesso? (cooldown finito, non occupato,
+# e ha almeno stamina_min di stamina)
 func can_use() -> bool:
-	return cooldown_left <= 0.0 and not is_busy()
+	return cooldown_left <= 0.0 and not is_busy() and _has_stamina(float(params.get("stamina_min", 0.0)))
 
 
-# Lancia il potere (il player ha premuto il tasto)
+# Lancia il potere (il player ha premuto il tasto): parte il cooldown e si
+# consuma stamina_cost. I poteri con attacco caricato (has_charged_attack)
+# non passano da qui per la carica: gate/consumo li gestiscono da soli con
+# _has_stamina()/_spend_stamina() nei punti giusti (vedi start_charge/release_charge)
 func use() -> void:
 	cooldown_left = float(params.get("cooldown", 1.0))
+	_spend_stamina(float(params.get("stamina_cost", 0.0)))
+
+
+# Helper per le sottoclassi: il player ha almeno "amount" di stamina?
+func _has_stamina(amount: float) -> bool:
+	return player == null or player.current_stamina >= amount
+
+
+# Helper per le sottoclassi: toglie "amount" di stamina al player (clampata a 0 da player.gd)
+func _spend_stamina(amount: float) -> void:
+	if player != null:
+		player.spend_stamina(amount)
 
 
 # true finche' il player deve restare fermo/bloccato a causa del potere
@@ -75,9 +92,16 @@ func charge_time() -> float:
 	return 0.5
 
 
-# Il player ha iniziato a tenere premuto oltre charge_time()
-func start_charge() -> void:
-	pass
+# Il player ha iniziato a tenere premuto oltre charge_time(): a questo punto
+# can_use() (quindi anche stamina_min) e' gia' stato verificato da player.gd,
+# ma se la versione caricata ha una soglia/costo diversi dal tocco normale
+# (es. charge_stamina_min/charge_stamina_cost) sta alla sottoclasse controllarli
+# qui con _has_stamina()/_spend_stamina() prima di avviare davvero la carica.
+# Ritorna true se la carica e' partita: player.gd chiama update_charge/
+# release_charge solo in quel caso, altrimenti al rilascio resta un tocco
+# normale (vedi player._update_charged_secondary)
+func start_charge() -> bool:
+	return true
 
 
 # Chiamata ogni frame (anche a player fermo) finche' la carica e' attiva

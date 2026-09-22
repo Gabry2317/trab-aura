@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" path="res://fine_partita.tscn" id="7_km5ld"]
 [ext_resource type="AudioStream" uid="uid://cvxc68pr2ya60" path="res://sound/Music/Seve me (A7X).mp3" id="7_n6hdu"]
 [ext_resource type="Script" uid="uid://def4douxfq3ly" path="res://SCRIPT/healt_bar.gd" id="8_healthbar"]
+[ext_resource type="Script" path="res://SCRIPT/stamina_bar.gd" id="9_staminabar"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_i2t4f"]
 texture = ExtResource("3_km5ld")
@@ -11670,6 +11671,25 @@ corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_stamina_bg"]
+bg_color = Color(0.06, 0.06, 0.07, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.85, 0.85, 0.85, 0.7)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_stamina_fill"]
+bg_color = Color(0.95, 0.78, 0.15, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
 [node name="level" type="Node" unique_id=2141253370]
 script = ExtResource("1_oi3di")
 
@@ -11814,5 +11834,37 @@ theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 14
 text = "P2"
 horizontal_alignment = 2
+
+[node name="BarraStaminaP1" type="ProgressBar" parent="HUD" unique_id=999000008]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -340.0
+offset_top = 58.0
+offset_right = -90.0
+offset_bottom = 70.0
+grow_horizontal = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_stamina_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_stamina_fill")
+value = 100.0
+show_percentage = false
+script = ExtResource("9_staminabar")
+
+[node name="BarraStaminaP2" type="ProgressBar" parent="HUD" unique_id=999000009]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = 90.0
+offset_top = 58.0
+offset_right = 340.0
+offset_bottom = 70.0
+grow_horizontal = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_stamina_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_stamina_fill")
+fill_mode = 1
+value = 100.0
+show_percentage = false
+script = ExtResource("9_staminabar")
+player_id = 1
 
 [node name="FinePartita" parent="." unique_id=348708548 instance=ExtResource("7_km5ld")]

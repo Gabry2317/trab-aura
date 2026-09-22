@@ -2,6 +2,7 @@ class_name Player
 extends CharacterBody2D
 
 signal health_changed  # <-- serve per healt_bar.gd
+signal stamina_changed  # <-- serve per stamina_bar.gd
 signal died(player)  # emesso una sola volta quando la vita arriva a 0 (lo ascolta level.gd)
 
 # --- Statistiche: si modificano in res://data/fighters/ (base.cfg + un .cfg per personaggio), NON qui ---
@@ -15,6 +16,16 @@ var run_speed: float = 250.0
 var attack_move_speed: float = 10.0
 var jump_velocity: float = -300.0
 var can_run: bool = true
+
+# --- NUOVO: stamina (barra sotto quella della vita) ---
+# usata dal potere secondario (ogni potere ha il suo stamina_cost/stamina_min,
+# vedi fighter_power.gd): si consuma lanciandolo, si recupera nel tempo (di
+# piu' correndo) e colpendo a segno col pugno normale.
+var max_stamina: float = 100.0
+var current_stamina: float = 100.0
+var stamina_regen_rate: float = 8.0       # recuperata al secondo, sempre
+var stamina_regen_run_bonus: float = 12.0  # in piu' al secondo mentre si corre
+var stamina_hit_gain: float = 8.0          # guadagnata quando il pugno normale va a segno
 
 # --- feedback dei colpi (vedi _play_hit_feedback) ---
 var hit_knockback: float = 220.0       # rinculo: velocita' orizzontale della spinta subita
@@ -302,6 +313,12 @@ func _load_stats() -> void:
 	can_run = bool(_stat("stats", "can_run", can_run))
 	block_damage_reduction = clampf(float(_stat("stats", "block_damage_reduction", block_damage_reduction)), 0.0, 1.0)
 
+	max_stamina = float(_stat("stats", "max_stamina", max_stamina))
+	current_stamina = max_stamina
+	stamina_regen_rate = float(_stat("stats", "stamina_regen_rate", stamina_regen_rate))
+	stamina_regen_run_bonus = float(_stat("stats", "stamina_regen_run_bonus", stamina_regen_run_bonus))
+	stamina_hit_gain = float(_stat("stats", "stamina_hit_gain", stamina_hit_gain))
+
 	hit_knockback = float(_stat("feedback", "hit_knockback", hit_knockback))
 	hit_stun_duration = float(_stat("feedback", "hit_stun_duration", hit_stun_duration))
 	hit_flash_duration = float(_stat("feedback", "hit_flash_duration", hit_flash_duration))
@@ -365,6 +382,20 @@ func _setup_secondary_power() -> void:
 
 func _power_busy() -> bool:
 	return secondary_power != null and secondary_power.is_busy()
+
+
+# Aggiunge/toglie stamina (clampata tra 0 e max_stamina) ed emette stamina_changed
+# per la barra. Usate dal potere secondario per il costo/gate di ogni mossa
+# (vedi fighter_power.gd) e da _on_damaged per il recupero sui pugni normali.
+func gain_stamina(amount: float) -> void:
+	if amount == 0.0:
+		return
+	current_stamina = clampf(current_stamina + amount, 0.0, max_stamina)
+	stamina_changed.emit()
+
+
+func spend_stamina(amount: float) -> void:
+	gain_stamina(-amount)
 
 
 # Altezza visibile del personaggio in pixel di mondo (serve ai poteri per scalarsi)
@@ -554,8 +585,7 @@ func _update_charged_secondary(delta: float) -> void:
 			secondary_power.update_charge(delta)
 		elif _secondary_hold_time >= secondary_power.charge_time() and is_on_floor() \
 				and not isAttacking and secondary_power.can_use():
-			_secondary_charging = true
-			secondary_power.start_charge()
+			_secondary_charging = secondary_power.start_charge()  # puo' fallire (es. stamina): si ritenta ogni frame
 	else:
 		if _secondary_charging:
 			_secondary_charging = false
@@ -614,6 +644,12 @@ func _physics_process(delta: float) -> void:
 	# chi ha can_run = false nel suo .cfg non può correre
 	var is_running: bool = _is_running() and can_run
 	var current_speed: float = run_speed if is_running else speed
+
+	# stamina: si recupera sempre nel tempo, di piu' mentre si corre
+	# (il consumo, invece, e' nel potere: vedi fighter_power.gd use()/start_charge())
+	if current_stamina < max_stamina:
+		var regen: float = stamina_regen_rate + (stamina_regen_run_bonus if is_running else 0.0)
+		gain_stamina(regen * delta)
 
 	if isAttacking:
 		current_speed = attack_move_speed
@@ -685,6 +721,11 @@ func _on_damaged(amount: int, source: Node) -> void:
 
 	current_health = maxi(current_health - applied_damage, 0)
 	health_changed.emit()  # aggiorna la barra vita
+
+	# il pugno normale (non un potere) va a segno: un po' di stamina a chi ha colpito
+	# (source.isAttacking e' vero solo durante la hitbox del pugno base, non dei poteri)
+	if source is Player and source != self and source.isAttacking:
+		source.gain_stamina(source.stamina_hit_gain)
 
 	_play_hit_feedback(source, is_blocking)
 

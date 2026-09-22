@@ -25,6 +25,8 @@ func default_params() -> Dictionary:
 	var charge_params: Dictionary = {
 		# --- soglia di carica ---
 		"charge_time": 0.5,           # secondi da tenere premuto prima che parta la carica
+		"charge_stamina_min": 40.0,   # stamina minima per iniziare la carica (a parte, piu' alta di stamina_min)
+		"charge_stamina_cost": 50.0,  # stamina consumata quando la colonna parte davvero (al rilascio)
 
 		# --- pointer (mira automatica, non controllabile) ---
 		"pointer_sheet": "res://sprite/Player/Iacobisio/Secondary/pointer.png",  # catena trasparente di mira
@@ -46,10 +48,10 @@ func default_params() -> Dictionary:
 										# Se cambi column_hold_frame o il foglio, ritocca questo valore
 										# a occhio finche' la base tocca terra.
 		"column_fps": 20.0,           # velocita' di crescita/ritiro della colonna
-		"column_height_ratio": 3.8,   # altezza della colonna rispetto al player
+		"column_height_ratio": 1.4,   # altezza della colonna rispetto al player
 		"column_feet_y": 70.0,        # quota dei piedi della colonna rispetto all'origine del player
 									  # (separata da pointer_feet_y: regola qui se il pilastro non tocca terra)
-		"column_hold_frame": 6,      # fotogramma (indice nel foglio) su cui la colonna resta ancorata
+		"column_hold_frame": -1,      # fotogramma (indice nel foglio) su cui la colonna resta ancorata
 									  # dopo la crescita, finche' dura l'area denial. -1 = automatico
 									  # (meta' foglio: col catena.png fornito e' il fotogramma "ancorata")
 		"column_hitbox_w": 0.7,       # larghezza hitbox della colonna (frazione della sprite)
@@ -85,12 +87,21 @@ func charge_time() -> float:
 	return float(params["charge_time"])
 
 
-# Il player ha tenuto premuto "secondary" oltre charge_time(): nasce il pointer
-func start_charge() -> void:
+# Il player ha tenuto premuto "secondary" oltre charge_time(): nasce il pointer.
+# can_use() (chiamato da player.gd prima di arrivare qui) ha gia' verificato
+# stamina_min, ma la versione caricata ha una soglia sua (charge_stamina_min,
+# di solito piu' alta): se non basta, non parte (ritorna false) - player.gd
+# ritentera' ogni frame finche' il tasto resta premuto, e se non basta mai
+# al rilascio restera' un tocco normale invece di non fare nulla
+func start_charge() -> bool:
+	if not _has_stamina(float(params["charge_stamina_min"])):
+		if bool(params["debug"]):
+			print("[ChainCharged] stamina insufficiente per la carica")
+		return false
 	var tex: Texture2D = load(str(params["pointer_sheet"]))
 	if tex == null:
 		push_warning("chain_power_charged: pointer '%s' non trovato" % params["pointer_sheet"])
-		return
+		return false
 	_charging = true
 	player.velocity.x = 0.0
 	_charge_dir = player.get_facing_dir()  # fissata qui: il pointer non si controlla piu' dopo
@@ -109,6 +120,7 @@ func start_charge() -> void:
 	_pointer = sprite
 	_pointer_x = player.global_position.x + _charge_dir * float(params["pointer_start_x"])
 	_update_pointer_position()
+	return true
 
 
 # Chiamata ogni frame mentre "secondary" resta premuto dopo la soglia: il
@@ -135,7 +147,8 @@ func _update_pointer_position() -> void:
 
 
 # Il player ha rilasciato "secondary" dopo aver caricato: il pointer sparisce
-# e al suo posto si abbatte la colonna (big_chain), a terra (column_feet_y)
+# e al suo posto si abbatte la colonna (big_chain), a terra (column_feet_y).
+# Qui la carica e' davvero "sferrata": si consuma charge_stamina_cost.
 func release_charge() -> void:
 	if not _charging:
 		return
@@ -144,6 +157,7 @@ func release_charge() -> void:
 		var col_pos: Vector2 = Vector2(_pointer_x, player.global_position.y + float(params["column_feet_y"]))
 		_despawn_pointer()
 		_spawn_column(col_pos)
+		_spend_stamina(float(params["charge_stamina_cost"]))
 	cooldown_left = float(params["cooldown"])
 
 
