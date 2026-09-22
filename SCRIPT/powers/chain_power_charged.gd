@@ -40,11 +40,16 @@ func default_params() -> Dictionary:
 		"column_hframes": 7,          # colonne del foglio (7x2 = 14 fotogrammi)
 		"column_vframes": 2,          # righe del foglio
 		"column_frames": -1,          # fotogrammi da usare; -1 = tutti quelli del foglio (hframes*vframes)
+		"column_ground_margin": 105.0,  # px (nel foglio originale) di spazio vuoto sotto il disegno nel
+										# fotogramma "ancorato": senza questo la colonna resta sospesa,
+										# perche' il fotogramma e' piu' alto del disegno vero e proprio.
+										# Se cambi column_hold_frame o il foglio, ritocca questo valore
+										# a occhio finche' la base tocca terra.
 		"column_fps": 20.0,           # velocita' di crescita/ritiro della colonna
-		"column_height_ratio": 1.4,   # altezza della colonna rispetto al player
+		"column_height_ratio": 3.8,   # altezza della colonna rispetto al player
 		"column_feet_y": 70.0,        # quota dei piedi della colonna rispetto all'origine del player
 									  # (separata da pointer_feet_y: regola qui se il pilastro non tocca terra)
-		"column_hold_frame": -1,      # fotogramma (indice nel foglio) su cui la colonna resta ancorata
+		"column_hold_frame": 6,      # fotogramma (indice nel foglio) su cui la colonna resta ancorata
 									  # dopo la crescita, finche' dura l'area denial. -1 = automatico
 									  # (meta' foglio: col catena.png fornito e' il fotogramma "ancorata")
 		"column_hitbox_w": 0.7,       # larghezza hitbox della colonna (frazione della sprite)
@@ -222,7 +227,10 @@ func _spawn_column(pos: Vector2) -> void:
 	sprite.name = "Sprite"
 	sprite.sprite_frames = frames
 	sprite.centered = false
-	sprite.offset = Vector2(-fw / 2.0, -fh)
+	# ancorato non al bordo del fotogramma ma al fondo del disegno vero e proprio
+	# (fh - column_ground_margin): altrimenti lo spazio vuoto sotto il disegno
+	# nel foglio lascia la colonna sospesa in aria
+	sprite.offset = Vector2(-fw / 2.0, -(fh - float(params["column_ground_margin"])))
 	sprite.scale = Vector2.ONE * col_scale
 	column.add_child(sprite)
 

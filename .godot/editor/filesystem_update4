@@ -1,5 +1,3 @@
 res://SCRIPT/powers/chain_power_charged.gd
-res://data/fighters/iacopo.cfg
-res://SCRIPT/player.gd
-res://SCRIPT/powers/chain_power.gd
-res://SCRIPT/powers/fighter_power.gd
+res://menu.tscn
+res://theme/ui_theme.tres
