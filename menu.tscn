@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://c1ktuhqofw3w4" path="res://SCRIPT/toselect.gd" id="2_ouk20"]
 [ext_resource type="Script" uid="uid://ctolt6a40dofx" path="res://SCRIPT/quit.gd" id="3_mae5d"]
 [ext_resource type="Script" uid="uid://dg2ewf6okwn4n" path="res://SCRIPT/apri_impostazioni.gd" id="4_impo1"]
+[ext_resource type="Script" path="res://SCRIPT/toonline.gd" id="5_onlin"]
 
 [node name="Node2D" type="Node2D" unique_id=1696016993]
 
@@ -20,6 +21,15 @@ offset_bottom = 416.0
 action_mode = 0
 flat = true
 script = ExtResource("2_ouk20")
+
+[node name="ONLINE" type="Button" parent="." unique_id=2121970819]
+offset_left = 440.0
+offset_top = 424.0
+offset_right = 833.0
+offset_bottom = 462.0
+theme_override_font_sizes/font_size = 22
+text = "Online"
+script = ExtResource("5_onlin")
 
 [node name="QUIT" type="Button" parent="." unique_id=2121970817]
 offset_left = 540.0
