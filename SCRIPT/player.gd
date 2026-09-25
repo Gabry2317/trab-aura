@@ -56,6 +56,22 @@ var block_damage_reduction: float = 0.3  # % di danno ancora subita mentre si bl
 
 var isHurt: bool = false  # true mentre dura lo stordimento da colpo subito (vedi hurt_stun_left)
 var isAttacking: bool = false
+
+# --- FATALITY: vedi FatalityManager (autoload) e fatality_settings.gd ---
+# is_downed: true quando il player e' arrivato all'HP minimo (FatalityManager.settings.downed_health)
+#   invece di morire subito: resta "in piedi ma finito" finche' non arriva il colpo di grazia
+#   (un altro colpo qualsiasi, oppure la combo specifica del suo avversario).
+var is_downed: bool = false
+# combat_locked: true durante la cinematica della fatality, blocca input/fisica del player.
+var combat_locked: bool = false
+# is_dead: true DOPO la fatality (quando "died" e' gia' stato emesso). A fine
+# cinematica combat_locked torna false per tutti (anche per la vittima, serve
+# per far ripartire l'altro player), ma senza questo flag il player a 0 HP
+# poteva continuare a camminare/attaccare come se niente fosse (sembrava
+# "non morire mai") finche' level.gd non reagiva al segnale "died". Con
+# is_dead=true il player resta fermo nella posa finale, qualunque cosa
+# level.gd faccia e in qualunque momento lo faccia.
+var is_dead: bool = false
 var hitbox_delay_left: float = 0.0  # secondi che mancano all'attivazione della hitbox
 var hurt_stun_left: float = 0.0  # secondi di stordimento rimanenti dopo un colpo subito
 var is_blocking: bool = false  # true mentre il player tiene premuto il tasto "secondary"
@@ -302,6 +318,19 @@ func _get_or_build_hitbox(fighter: String, sprite: AnimatedSprite2D) -> Hitbox:
 
 
 func _load_stats() -> void:
+	# reset dello stato fatality: importante se lo stesso nodo Player viene
+	# riutilizzato per un nuovo round/scontro invece di essere ricreato da zero.
+	# Puliamo anche il lato FatalityManager (non solo il flag locale): se il
+	# round precedente e' finito (es. timeout) MENTRE questo player era
+	# "downed" ma non ancora finito con il colpo di grazia, FatalityManager
+	# lo ricorda ancora come downed. Senza questa riga, il primo colpo del
+	# round nuovo lo manda dritto in fatality invece di infliggere danno
+	# normale: e' la causa piu' probabile del "respawn a 1 vita".
+	is_downed = false
+	combat_locked = false
+	is_dead = false
+	FatalityManager.clear_downed(player_id)
+
 	max_health = int(_stat("stats", "max_health", max_health))
 	current_health = max_health
 	attack_damage = int(_stat("stats", "attack_damage", attack_damage))
@@ -597,6 +626,9 @@ func _update_charged_secondary(delta: float) -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if combat_locked or is_dead:
+		return  # in corso una cinematica fatality (o gia' morto): niente input/fisica
+
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 
@@ -678,7 +710,7 @@ func _physics_process(delta: float) -> void:
 
 
 func attack() -> void:
-	if isAttacking:
+	if isAttacking or is_dead:
 		return
 	isAttacking = true
 
@@ -711,15 +743,54 @@ func _on_chain_animation_finished() -> void:
 
 
 func _on_damaged(amount: int, source: Node) -> void:
-	if source == self or current_health <= 0:
+	if source == self or current_health <= 0 or is_dead:
 		return  # un player non può colpire se stesso, né essere colpito da morto
+
+	if combat_locked:
+		# in corso una cinematica fatality: niente danno va processato finche' non
+		# finisce, altrimenti un'arma "persistente" ancora attiva (es. la colonna
+		# del potere caricato di Iacopo, che resta a contatto e continua a
+		# collidere ogni frame anche mentre i player sono bloccati) rimetteva
+		# ogni volta la vittima in stato "downed" e poteva far scattare una
+		# SECONDA cinematica fatality mentre la prima era ancora in corso.
+		return
+
+	if is_downed:
+		# Non fidarti solo del flag locale: se FatalityManager non ci considera
+		# (piu') "downed" (vedi clear_downed(), chiamato da _load_stats()),
+		# questo e' un residuo di un round precedente rimasto agganciato
+		# (es. livello che resetta l'HP a mano senza richiamare _load_stats()).
+		# In quel caso lo puliamo qui e il colpo viene trattato come danno
+		# normale, invece di scatenare subito una fatality indesiderata.
+		if not FatalityManager.is_player_downed(player_id):
+			is_downed = false
+		else:
+			# e' gia' all'HP minimo, in attesa del colpo di grazia: un colpo qualsiasi la finisce
+			# (vedi FatalityManager.settings.any_hit_finishes). Niente danno da calcolare: parte
+			# direttamente la cinematica, che a fine sequenza emette "died" come faceva questo script prima.
+			_play_hit_feedback(source, false)
+			FatalityManager.downed_player_hit(self, source)
+			return
 
 	# bloccando si subisce solo una frazione del danno (block_damage_reduction)
 	var applied_damage: int = amount
 	if is_blocking:
 		applied_damage = int(round(amount * block_damage_reduction))
 
-	current_health = maxi(current_health - applied_damage, 0)
+	var downed_health: int = FatalityManager.settings.downed_health if FatalityManager.settings else 1
+	var would_be_health: int = current_health - applied_damage
+
+	if would_be_health <= 0:
+		# invece di morire subito, si ferma all'HP minimo e diventa "downed":
+		# serve il colpo di grazia (altro colpo, o la combo fatality dell'avversario) per finirla.
+		current_health = maxi(downed_health, 1)
+		health_changed.emit()
+		_play_hit_feedback(source, is_blocking)
+		is_downed = true
+		FatalityManager.mark_downed(self, source)
+		return
+
+	current_health = would_be_health
 	health_changed.emit()  # aggiorna la barra vita
 
 	# il pugno normale (non un potere) va a segno: un po' di stamina a chi ha colpito
@@ -728,9 +799,6 @@ func _on_damaged(amount: int, source: Node) -> void:
 		source.gain_stamina(source.stamina_hit_gain)
 
 	_play_hit_feedback(source, is_blocking)
-
-	if current_health <= 0:
-		died.emit(self)
 
 
 # Rinculo + stordimento breve + lampo sullo sprite + suono d'impatto.
