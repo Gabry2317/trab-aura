@@ -76,6 +76,14 @@ var hitbox_delay_left: float = 0.0  # secondi che mancano all'attivazione della 
 var hurt_stun_left: float = 0.0  # secondi di stordimento rimanenti dopo un colpo subito
 var is_blocking: bool = false  # true mentre il player tiene premuto il tasto "secondary"
 
+# --- NUOVO: multiplayer online (vedi network_manager.gd) ---
+var is_networked: bool = false  # true se la partita gira online (deciso da solo in _enter_tree)
+var is_local: bool = true       # true se questo Player è quello di QUESTO PC (rilevante solo se is_networked)
+var synced_animation: String = "idle"  # replicata al client per mostrare l'animazione giusta
+var synced_flip_h: bool = false        # replicato al client per il verso giusto
+# ultimo stato tasti ricevuto dal PC remoto (letto dall'host per simulare il player non suo)
+var _remote_input: Dictionary = {"dir": 0.0, "run": false, "jump": false, "attack": false, "block": false, "secondary": false}
+
 # --- NUOVO: attacco caricato del potere secondario (vedi fighter_power.has_charged_attack) ---
 var _secondary_hold_time: float = 0.0  # da quanto e' tenuto premuto "secondary"
 var _secondary_charging: bool = false  # true mentre la carica e' attiva (dopo la soglia)
@@ -125,6 +133,12 @@ var hitbox_base_x: float  # X originale della shape (in editor)
 
 
 func _enter_tree() -> void:
+	# NUOVO: capisce da solo se la partita è online e se questo player_id è
+	# quello controllato da QUESTO PC (host = sempre player_id 0)
+	is_networked = multiplayer.has_multiplayer_peer()
+	if is_networked:
+		is_local = (player_id == 0) == multiplayer.is_server()
+
 	# skin e statistiche si decidono qui, prima di qualsiasi _ready():
 	# così la barra della vita legge già il max_health giusto
 	# se skin_override non è impostato, usa la config del GameState per questo player_id
@@ -144,6 +158,75 @@ func _enter_tree() -> void:
 	fighter_name = _skins[skin]
 
 	_load_stats()
+
+
+# --- NUOVO: funzioni di rete ---
+
+# Crea a runtime un MultiplayerSynchronizer che replica dall'host (sempre
+# autorevole) a chi si connette: posizione, vita, stamina e le due variabili
+# "synced_*" che tengono animazione e verso allineati sul client.
+func _setup_networking() -> void:
+	if not is_networked:
+		return
+	set_multiplayer_authority(1)  # l'host (peer 1) simula la fisica per entrambi i player
+
+	var config := SceneReplicationConfig.new()
+	config.add_property(NodePath(".:global_position"))
+	config.add_property(NodePath(".:current_health"))
+	config.add_property(NodePath(".:current_stamina"))
+	config.add_property(NodePath(".:synced_animation"))
+	config.add_property(NodePath(".:synced_flip_h"))
+
+	var sync := MultiplayerSynchronizer.new()
+	sync.name = "MultiplayerSynchronizer"
+	sync.replication_config = config
+	add_child(sync)
+
+
+# Sul client questo Player non è autorevole: non simula nulla, si limita a
+# mostrare l'animazione/il verso arrivati sincronizzati dall'host.
+func _process(_delta: float) -> void:
+	if not is_networked or is_multiplayer_authority():
+		return
+	if current_sprite == null:
+		return
+	if current_sprite.animation != synced_animation and current_sprite.sprite_frames != null \
+			and current_sprite.sprite_frames.has_animation(synced_animation):
+		current_sprite.play(synced_animation)
+	current_sprite.flip_h = synced_flip_h
+	if chain_sprite != null:
+		chain_sprite.flip_h = synced_flip_h
+
+
+# Chiamata solo dal PC che controlla davvero questo player (is_local): manda
+# all'host (rpc_id(1, ...)) lo stato attuale dei propri tasti. L'host, se è
+# lui stesso il player locale, non ne ha bisogno (legge l'Input direttamente).
+func _send_local_input() -> void:
+	if multiplayer.is_server():
+		return
+	_receive_input.rpc_id(1, {
+		"dir": Input.get_axis("p1_left", "p1_right"),
+		"run": Input.is_action_pressed("p1_run"),
+		"jump": Input.is_action_just_pressed("p1_jump"),
+		"attack": Input.is_action_just_pressed("p1_attack"),
+		"block": Input.is_action_pressed("p1_secondary"),
+		"secondary": Input.is_action_just_pressed("p1_secondary"),
+	})
+
+
+@rpc("any_peer", "unreliable_ordered")
+func _receive_input(input: Dictionary) -> void:
+	_remote_input = input
+
+
+# Legge (e consuma) un tasto "a pressione singola" arrivato dal client: si
+# azzera subito dopo la lettura così un solo invio non viene contato più
+# volte nei fotogrammi fisici dell'host in cui non arriva un aggiornamento.
+func _remote_consume(key: String) -> bool:
+	var v: bool = bool(_remote_input.get(key, false))
+	if v:
+		_remote_input[key] = false
+	return v
 
 
 # --- Lettura di res://data/fighters/ ---
@@ -440,6 +523,8 @@ func get_facing_dir() -> float:
 
 
 func _ready() -> void:
+	_setup_networking()
+
 	hurtbox.damaged.connect(_on_damaged)
 
 	hit_sfx.name = "HitSfx"
@@ -527,6 +612,7 @@ func _set_hitbox_disabled(hitbox: Hitbox, value: bool) -> void:
 
 # Gira il personaggio: sprite, Chain di Iacopo e hitbox del pugno
 func _set_facing(left: bool) -> void:
+	synced_flip_h = left
 	current_sprite.flip_h = left
 	if chain_sprite != null:
 		chain_sprite.flip_h = left
@@ -534,8 +620,14 @@ func _set_facing(left: bool) -> void:
 	current_hitbox_shape.position.x = -abs(hitbox_base_x) if left else abs(hitbox_base_x)
 
 
-# --- NUOVO: helper di input, isolati per device_id ---
+# --- NUOVO: helper di input, isolati per device_id (o per rete se is_networked) ---
+# In rete ogni PC usa sempre lo schema "p1_*" (WASD/spazio/click) sulla
+# propria tastiera: non serve più dividere la tastiera in due, ognuno ha la
+# sua. Il player non locale (quello dell'altro PC, simulato dall'host) legge
+# invece l'ultimo stato ricevuto via RPC (_remote_input).
 func _get_direction() -> float:
+	if is_networked:
+		return Input.get_axis("p1_left", "p1_right") if is_local else float(_remote_input.get("dir", 0.0))
 	match device_id:
 		-1:
 			return Input.get_axis("p1_left", "p1_right")
@@ -546,6 +638,8 @@ func _get_direction() -> float:
 
 
 func _jump_just_pressed() -> bool:
+	if is_networked:
+		return Input.is_action_just_pressed("p1_jump") if is_local else _remote_consume("jump")
 	match device_id:
 		-1:
 			return Input.is_action_just_pressed("p1_jump")
@@ -556,6 +650,8 @@ func _jump_just_pressed() -> bool:
 
 
 func _attack_just_pressed() -> bool:
+	if is_networked:
+		return Input.is_action_just_pressed("p1_attack") if is_local else _remote_consume("attack")
 	match device_id:
 		-1:
 			return Input.is_action_just_pressed("p1_attack")
@@ -569,6 +665,8 @@ func _attack_just_pressed() -> bool:
 # p2_secondary): usata per lanciare il potere secondario, a
 # differenza di _block_pressed() che invece lo legge "tenuto premuto"
 func _secondary_just_pressed() -> bool:
+	if is_networked:
+		return Input.is_action_just_pressed("p1_secondary") if is_local else _remote_consume("secondary")
 	match device_id:
 		-1:
 			return Input.is_action_just_pressed("p1_secondary")
@@ -579,6 +677,8 @@ func _secondary_just_pressed() -> bool:
 
 
 func _is_running() -> bool:
+	if is_networked:
+		return Input.is_action_pressed("p1_run") if is_local else bool(_remote_input.get("run", false))
 	match device_id:
 		-1:
 			return Input.is_action_pressed("p1_run")
@@ -591,6 +691,8 @@ func _is_running() -> bool:
 # tasto "secondary" (p1_secondary / p2_secondary in project.godot): tenuto
 # premuto attiva il blocco (vedi is_blocking in _physics_process)
 func _block_pressed() -> bool:
+	if is_networked:
+		return Input.is_action_pressed("p1_secondary") if is_local else bool(_remote_input.get("block", false))
 	match device_id:
 		-1:
 			return Input.is_action_pressed("p1_secondary")
@@ -626,8 +728,16 @@ func _update_charged_secondary(delta: float) -> void:
 
 
 func _physics_process(delta: float) -> void:
+<<<<<<< HEAD
 	if combat_locked or is_dead:
 		return  # in corso una cinematica fatality (o gia' morto): niente input/fisica
+=======
+	if is_networked:
+		if is_local:
+			_send_local_input()
+		if not is_multiplayer_authority():
+			return  # il client non simula: aspetta la posizione sincronizzata dall'host
+>>>>>>> 83dd89e0fa07e8926480829807ac2e34ccf00957
 
 	if not is_on_floor():
 		velocity += get_gravity() * delta
@@ -701,10 +811,13 @@ func _physics_process(delta: float) -> void:
 		if direction:
 			if is_running:
 				current_sprite.play("run")
+				synced_animation = "run"
 			else:
 				current_sprite.play("walk")
+				synced_animation = "walk"
 		else:
 			current_sprite.play("idle")
+			synced_animation = "idle"
 
 	move_and_slide()
 
@@ -713,6 +826,7 @@ func attack() -> void:
 	if isAttacking or is_dead:
 		return
 	isAttacking = true
+	synced_animation = "hit"
 
 	current_hitbox.reset_hits()
 	if attack_delay <= 0.0:
@@ -743,7 +857,13 @@ func _on_chain_animation_finished() -> void:
 
 
 func _on_damaged(amount: int, source: Node) -> void:
+<<<<<<< HEAD
 	if source == self or current_health <= 0 or is_dead:
+=======
+	if is_networked and not is_multiplayer_authority():
+		return  # in rete solo l'host applica i danni: il client vede solo il risultato sincronizzato
+	if source == self or current_health <= 0:
+>>>>>>> 83dd89e0fa07e8926480829807ac2e34ccf00957
 		return  # un player non può colpire se stesso, né essere colpito da morto
 
 	if combat_locked:
@@ -852,6 +972,7 @@ func _play_hurt_animation() -> void:
 		return
 	current_sprite.stop()  # riparte da capo anche se si viene colpiti di nuovo
 	current_sprite.play("hurt")
+	synced_animation = "hurt"
 
 
 # Schizzi di sangue: particelle rosse che partono dal punto colpito, spinte via

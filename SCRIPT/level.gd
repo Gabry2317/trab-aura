@@ -39,16 +39,25 @@ func _aggiorna_label_timer() -> void:
 func _on_player_died(morto: Player) -> void:
 	if partita_finita:
 		return  # se muoiono insieme, conta solo il primo
+	# NUOVO: in rete la decisione la prende solo l'host, poi la manda a
+	# entrambi via RPC (_mostra_fine); in locale (nessun peer) invariato
+	if multiplayer.has_multiplayer_peer() and not multiplayer.is_server():
+		return
 	partita_finita = true
 
 	# con due player, il vincitore è l'altro
 	var vincitore: int = 1 if morto.player_id == 0 else 0
 	var match_finito: bool = GameState.register_round_win(vincitore)
-	fine_partita.mostra(vincitore, match_finito)
+	if multiplayer.has_multiplayer_peer():
+		_mostra_fine.rpc(vincitore, match_finito)
+	else:
+		fine_partita.mostra(vincitore, match_finito)
 
 
 func _on_tempo_scaduto() -> void:
 	if partita_finita:
+		return
+	if multiplayer.has_multiplayer_peer() and not multiplayer.is_server():
 		return
 	partita_finita = true
 
@@ -60,8 +69,28 @@ func _on_tempo_scaduto() -> void:
 	var salute_p1: int = players_per_id[1].current_health
 
 	if salute_p0 == salute_p1:
-		fine_partita.mostra_pareggio()
+		if multiplayer.has_multiplayer_peer():
+			_mostra_pareggio.rpc()
+		else:
+			fine_partita.mostra_pareggio()
 	else:
 		var vincitore: int = 0 if salute_p0 > salute_p1 else 1
 		var match_finito: bool = GameState.register_round_win(vincitore)
-		fine_partita.mostra(vincitore, match_finito)
+		if multiplayer.has_multiplayer_peer():
+			_mostra_fine.rpc(vincitore, match_finito)
+		else:
+			fine_partita.mostra(vincitore, match_finito)
+
+
+# NUOVO: chiamate dall'host a entrambi (call_local incluso) così la
+# schermata di fine round appare uguale su entrambi i PC
+@rpc("authority", "call_local", "reliable")
+func _mostra_fine(vincitore: int, match_finito: bool) -> void:
+	partita_finita = true
+	fine_partita.mostra(vincitore, match_finito)
+
+
+@rpc("authority", "call_local", "reliable")
+func _mostra_pareggio() -> void:
+	partita_finita = true
+	fine_partita.mostra_pareggio()

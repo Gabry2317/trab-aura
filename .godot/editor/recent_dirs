@@ -1,10 +1,13 @@
+<<<<<<< HEAD
 res://sprite/Player/WND_trab/death/
+=======
+res://SCRIPT/
+>>>>>>> 83dd89e0fa07e8926480829807ac2e34ccf00957
 res://sprite/Player/WND_trab/aura attack/
 res://sprite/Player/WND_trab/point/
 res://sprite/Player/Iacobisio/Secondary/
 res://sprite/Player/Andrix/
 res://sprite/Player/WND_trab/
-res://SCRIPT/
 res://sprite/map/hell/
 res://sprite/Player/Andrix/win/
 res://sprite/Player/Andrix/hit/
