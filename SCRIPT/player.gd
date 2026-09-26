@@ -703,7 +703,7 @@ func _block_pressed() -> bool:
 
 
 # Gestisce il tasto "secondary" per i poteri con attacco caricato (vedi
-# fighter_power.has_charged_attack()): tenuto premuto oltre charge_time()
+# fighter_power.has_charged_attack()): tenuto premuto oltre charge_time() secondi
 # avvia la carica (start_charge/update_charge); il rilascio la conclude
 # (release_charge). Un tocco più breve della soglia resta un uso normale
 # del potere (use()), come per i poteri senza carica.
@@ -728,16 +728,13 @@ func _update_charged_secondary(delta: float) -> void:
 
 
 func _physics_process(delta: float) -> void:
-<<<<<<< HEAD
 	if combat_locked or is_dead:
 		return  # in corso una cinematica fatality (o gia' morto): niente input/fisica
-=======
 	if is_networked:
 		if is_local:
 			_send_local_input()
 		if not is_multiplayer_authority():
 			return  # il client non simula: aspetta la posizione sincronizzata dall'host
->>>>>>> 83dd89e0fa07e8926480829807ac2e34ccf00957
 
 	if not is_on_floor():
 		velocity += get_gravity() * delta
@@ -857,13 +854,9 @@ func _on_chain_animation_finished() -> void:
 
 
 func _on_damaged(amount: int, source: Node) -> void:
-<<<<<<< HEAD
-	if source == self or current_health <= 0 or is_dead:
-=======
 	if is_networked and not is_multiplayer_authority():
 		return  # in rete solo l'host applica i danni: il client vede solo il risultato sincronizzato
-	if source == self or current_health <= 0:
->>>>>>> 83dd89e0fa07e8926480829807ac2e34ccf00957
+	if source == self or current_health <= 0 or is_dead:
 		return  # un player non può colpire se stesso, né essere colpito da morto
 
 	if combat_locked:

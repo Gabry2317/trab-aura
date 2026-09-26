@@ -18,11 +18,8 @@ config/icon="res://icon.svg"
 [autoload]
 
 GameState="*uid://wqok4laf331x"
-<<<<<<< HEAD
 FatalityManager="*res://SCRIPT/fatality_manager.gd"
-=======
 Network="*uid://e3hpoos7dv3p"
->>>>>>> 83dd89e0fa07e8926480829807ac2e34ccf00957
 
 [display]
 

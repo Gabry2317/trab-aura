@@ -10,7 +10,7 @@
 [ext_resource type="PackedScene" path="res://fine_partita.tscn" id="7_km5ld"]
 [ext_resource type="AudioStream" uid="uid://cvxc68pr2ya60" path="res://sound/Music/Seve me (A7X).mp3" id="7_n6hdu"]
 [ext_resource type="Script" uid="uid://def4douxfq3ly" path="res://SCRIPT/healt_bar.gd" id="8_healthbar"]
-[ext_resource type="Script" path="res://SCRIPT/stamina_bar.gd" id="9_staminabar"]
+[ext_resource type="Script" uid="uid://gupe7veoh058" path="res://SCRIPT/stamina_bar.gd" id="9_staminabar"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_i2t4f"]
 texture = ExtResource("3_km5ld")
@@ -11861,8 +11861,8 @@ offset_bottom = 70.0
 grow_horizontal = 2
 theme_override_styles/background = SubResource("StyleBoxFlat_stamina_bg")
 theme_override_styles/fill = SubResource("StyleBoxFlat_stamina_fill")
-fill_mode = 1
 value = 100.0
+fill_mode = 1
 show_percentage = false
 script = ExtResource("9_staminabar")
 player_id = 1
