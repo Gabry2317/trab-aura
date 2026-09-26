@@ -64,4 +64,4 @@ func _on_rigioca_pressed() -> void:
 
 func _on_menu_pressed() -> void:
 	get_tree().paused = false
-	get_tree().change_scene_to_file("res://menu.tscn")
+	get_tree().change_scene_to_file("res://ui_unificata.tscn")

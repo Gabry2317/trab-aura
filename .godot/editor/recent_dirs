@@ -1,8 +1,5 @@
-<<<<<<< HEAD
-res://sprite/Player/WND_trab/death/
-=======
+res://
 res://SCRIPT/
->>>>>>> 83dd89e0fa07e8926480829807ac2e34ccf00957
 res://sprite/Player/WND_trab/aura attack/
 res://sprite/Player/WND_trab/point/
 res://sprite/Player/Iacobisio/Secondary/
@@ -14,7 +11,6 @@ res://sprite/Player/Andrix/hit/
 res://sprite/Player/Andrix/walk/
 res://sprite/Player/Andrix/run/
 res://sprite/Player/Andrix/idle/
-res://
 res://sprite/Player/Iacobisio/chain/
 res://sprite/Player/WND_trab/pugno/
 res://sprite/Player/Nakakata/block/

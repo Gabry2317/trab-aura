@@ -1,50 +1,113 @@
-[gd_scene format=3 uid="uid://brf8uscrg5ast"]
+[gd_scene format=3 uid="uid://b8i3s5weeaikg"]
 
-[ext_resource type="Texture2D" uid="uid://cunan1qumpil6" path="res://sprite/UI/360_F_1977410715_JXhswK9bVHycE8kXWnPnSIJJOR2jrP4I (2).png" id="1_mae5d"]
+[ext_resource type="Texture2D" uid="uid://dp7uet6krxcee" path="res://sprite/UI/ChatGPT Image 26 set 2026, 12_36_12.png" id="1_l48gv"]
 [ext_resource type="Script" uid="uid://c1ktuhqofw3w4" path="res://SCRIPT/toselect.gd" id="2_ouk20"]
 [ext_resource type="Script" uid="uid://ctolt6a40dofx" path="res://SCRIPT/quit.gd" id="3_mae5d"]
-[ext_resource type="Script" uid="uid://dg2ewf6okwn4n" path="res://SCRIPT/apri_impostazioni.gd" id="4_impo1"]
-[ext_resource type="Script" path="res://SCRIPT/toonline.gd" id="5_onlin"]
+[ext_resource type="Script" path="res://SCRIPT/apri_impostazioni.gd" id="4_impo1"]
+[ext_resource type="Script" uid="uid://lqg8l1e07otv" path="res://SCRIPT/toonline.gd" id="5_onlin"]
+[ext_resource type="FontFile" uid="uid://fwsspbqoxsdm" path="res://font/kreaturekombatcond.ttf" id="6_font"]
+[ext_resource type="Texture2D" uid="uid://cb41iujp3xxr3" path="res://sprite/UI/menu.png" id="7_ecwwl"]
+[ext_resource type="AudioStream" uid="uid://63d70sp7l5ha" path="res://sound/Music/Should of Saw It (Bloodhound Lil Jeff).mp3" id="8_kk3ma"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hover"]
+bg_color = Color(0.65098, 0.098039, 0.117647, 0.85)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 6
+border_color = Color(0.94902, 0.784314, 0.184314, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_normal"]
+bg_color = Color(0.078431, 0.078431, 0.090196, 0.75)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 6
+border_color = Color(0.65098, 0.098039, 0.117647, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pressed"]
+bg_color = Color(0.4, 0.054902, 0.070588, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 3
+border_color = Color(0.94902, 0.784314, 0.184314, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="Theme" id="Theme_menu"]
+default_font = ExtResource("6_font")
+default_font_size = 30
+Button/colors/font_color = Color(0.929412, 0.929412, 0.929412, 1)
+Button/colors/font_focus_color = Color(1, 1, 1, 1)
+Button/colors/font_hover_color = Color(1, 1, 1, 1)
+Button/colors/font_pressed_color = Color(0.94902, 0.784314, 0.184314, 1)
+Button/font_sizes/font_size = 30
+Button/fonts/font = ExtResource("6_font")
+Button/styles/focus = SubResource("StyleBoxFlat_hover")
+Button/styles/hover = SubResource("StyleBoxFlat_hover")
+Button/styles/normal = SubResource("StyleBoxFlat_normal")
+Button/styles/pressed = SubResource("StyleBoxFlat_pressed")
 
 [node name="Node2D" type="Node2D" unique_id=1696016993]
 
 [node name="foto" type="Sprite2D" parent="." unique_id=1523117616]
-position = Vector2(641, 361)
-scale = Vector2(1.8768328, 2)
-texture = ExtResource("1_mae5d")
+position = Vector2(632.00006, 351.00003)
+scale = Vector2(0.7717372, 0.8223825)
+texture = ExtResource("1_l48gv")
 
 [node name="START" type="Button" parent="." unique_id=1259408516]
-offset_left = 440.0
-offset_top = 322.0
-offset_right = 833.0
-offset_bottom = 416.0
+offset_left = 428.0
+offset_top = 377.0
+offset_right = 848.0
+offset_bottom = 447.0
+theme = SubResource("Theme_menu")
 action_mode = 0
-flat = true
+text = "Start"
 script = ExtResource("2_ouk20")
 
 [node name="ONLINE" type="Button" parent="." unique_id=2121970819]
-offset_left = 440.0
-offset_top = 424.0
-offset_right = 833.0
-offset_bottom = 462.0
-theme_override_font_sizes/font_size = 22
+offset_left = 428.0
+offset_top = 465.0
+offset_right = 848.0
+offset_bottom = 535.0
+theme = SubResource("Theme_menu")
 text = "Online"
 script = ExtResource("5_onlin")
 
+[node name="IMPOSTAZIONI" type="Button" parent="." unique_id=2121970818]
+offset_left = 428.0
+offset_top = 553.0
+offset_right = 848.0
+offset_bottom = 623.0
+theme = SubResource("Theme_menu")
+text = "Impostazioni"
+script = ExtResource("4_impo1")
+
 [node name="QUIT" type="Button" parent="." unique_id=2121970817]
-offset_left = 540.0
-offset_top = 470.0
-offset_right = 736.0
-offset_bottom = 518.0
-theme_override_font_sizes/font_size = 22
+offset_left = 428.0
+offset_top = 641.0
+offset_right = 848.0
+offset_bottom = 711.0
+theme = SubResource("Theme_menu")
 text = "Esci"
 script = ExtResource("3_mae5d")
 
-[node name="IMPOSTAZIONI" type="Button" parent="." unique_id=2121970818]
-offset_left = 490.0
-offset_top = 540.0
-offset_right = 786.0
-offset_bottom = 588.0
-theme_override_font_sizes/font_size = 22
-text = "Impostazioni"
-script = ExtResource("4_impo1")
+[node name="Menu" type="Sprite2D" parent="." unique_id=1993710710]
+position = Vector2(641.00006, 180.00002)
+scale = Vector2(0.36376953, 0.36376953)
+texture = ExtResource("7_ecwwl")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=951785549]
+stream = ExtResource("8_kk3ma")
+autoplay = true
