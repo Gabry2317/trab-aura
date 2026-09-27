@@ -11,6 +11,8 @@ var players_per_id: Dictionary = {}  # player_id -> Player
 
 
 func _ready() -> void:
+	_applica_controlli()
+
 	# ascolta la morte di ogni player, indicizzandolo per player_id
 	for p in get_tree().get_nodes_in_group("players"):
 		if p is Player:
@@ -18,6 +20,30 @@ func _ready() -> void:
 			p.died.connect(_on_player_died)
 
 	_aggiorna_label_timer()
+
+
+# NUOVO: traduce la configurazione scelta nel pannello "Rilevazione controlli"
+# nel device_id che player.gd si aspetta già (-1 = tastiera schema p1_*,
+# -2 = tastiera schema p2_*, >=0 = indice del joypad), sovrascrivendo il
+# valore fisso impostato in scena. Senza questo, ogni Player usava sempre
+# lo stesso dispositivo indipendentemente da chi avesse scelto cosa in
+# selezione — da qui i personaggi che risultavano scambiati in partita.
+func _applica_controlli() -> void:
+	var controlli := Controlli.i()
+	print("[DEBUG] assegnazioni: ", controlli.assegnazioni)
+	for p in get_tree().get_nodes_in_group("players"):
+		if not (p is Player):
+			continue
+		var assegnazione: Dictionary = controlli.assegnazioni.get(p.player_id, {})
+		if assegnazione.is_empty():
+			continue
+		if assegnazione.tipo == "controller":
+			p.device_id = assegnazione.device
+		else:
+			# player_id 0 -> sempre schema tastiera "p1_*" (WASD)
+			# player_id 1 -> sempre schema tastiera "p2_*" (Frecce)
+			p.device_id = -1 if p.player_id == 0 else -2
+		print("[DEBUG] ", p.name, " -> device_id finale=", p.device_id)
 
 
 func _process(delta: float) -> void:

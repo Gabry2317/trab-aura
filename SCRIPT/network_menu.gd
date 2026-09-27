@@ -20,13 +20,36 @@ func _ready() -> void:
 	Network.connection_succeeded.connect(_on_connection_succeeded)
 	Network.connection_failed.connect(_on_connection_failed)
 
+	_show_local_ip_hint()
+
+
+# Mostra subito i possibili IP di questo PC (LAN e/o Hamachi/Radmin VPN/
+# ZeroTier/Tailscale se attivi) prima ancora di premere "Ospita partita",
+# così chi ospita sa già cosa dettare all'altro giocatore.
+func _show_local_ip_hint() -> void:
+	var hints: Array = Network.get_local_ip_hints()
+	if hints.is_empty():
+		status_label.text = "Assicurati di essere sulla stessa rete (LAN, Hamachi, Radmin VPN, Tailscale...) dell'altro giocatore."
+	else:
+		var parts: PackedStringArray = []
+		for hint in hints:
+			parts.append(hint.describe())
+		status_label.text = "I tuoi indirizzi (dai il giusto all'altro giocatore se ospiti):\n%s" % "\n".join(parts)
+
 
 func _on_host_pressed() -> void:
 	var err: Error = Network.host_game()
 	if err != OK:
 		status_label.text = "Errore nell'apertura della partita (porta occupata?)."
 		return
-	status_label.text = "In attesa dell'altro giocatore... (porta 7777, ricorda il port forwarding)"
+	var hints: Array = Network.get_local_ip_hints()
+	if hints.is_empty():
+		status_label.text = "In attesa dell'altro giocatore sulla porta %d..." % Network.DEFAULT_PORT
+	else:
+		var parts: PackedStringArray = []
+		for hint in hints:
+			parts.append(hint.describe())
+		status_label.text = "In attesa dell'altro giocatore... Digli di inserire:\n%s" % "\n".join(parts)
 	host_button.disabled = true
 	join_button.disabled = true
 

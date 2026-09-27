@@ -1,21 +1,22 @@
-[gd_scene load_steps=26 format=3]
+[gd_scene format=3 uid="uid://1t1kwh8hkmv"]
 
 [ext_resource type="Texture2D" uid="uid://dp7uet6krxcee" path="res://sprite/UI/ChatGPT Image 26 set 2026, 12_36_12.png" id="1_l48gv"]
-[ext_resource type="FontFile" uid="uid://fwsspbqoxsdm" path="res://font/kreaturekombatcond.ttf" id="6_font"]
-[ext_resource type="Texture2D" uid="uid://cb41iujp3xxr3" path="res://sprite/UI/menu.png" id="7_ecwwl"]
-[ext_resource type="AudioStream" uid="uid://63d70sp7l5ha" path="res://sound/Music/Should of Saw It (Bloodhound Lil Jeff).mp3" id="8_kk3ma"]
-[ext_resource type="Script" path="res://SCRIPT/ui_manager.gd" id="10_uimgr"]
-[ext_resource type="Script" path="res://SCRIPT/impostazioni.gd" id="1_set01"]
-[ext_resource type="Script" path="res://SCRIPT/network_menu.gd" id="1_netm"]
 [ext_resource type="Script" uid="uid://cipy4g7apisk0" path="res://SCRIPT/selezione_personaggio.gd" id="1_mlc5f"]
+[ext_resource type="Script" uid="uid://eer1l3rwrp43" path="res://SCRIPT/network_menu.gd" id="1_netm"]
+[ext_resource type="Script" uid="uid://d08g5b65wwk3u" path="res://SCRIPT/impostazioni.gd" id="1_set01"]
 [ext_resource type="Texture2D" uid="uid://u2jnwnejiiyt" path="res://sprite/UI/character-selection-gender-v0-t5ikpt1sj45g1.png" id="1_tc7ei"]
 [ext_resource type="Texture2D" uid="uid://cdwtotglxuof8" path="res://sprite/Player/proppick/Iacobisio.png" id="2_nvn06"]
 [ext_resource type="Texture2D" uid="uid://cce4o7a7h5lwd" path="res://sprite/Player/proppick/WND_trab.png" id="3_3cjf2"]
 [ext_resource type="Texture2D" uid="uid://drocuhbd43aky" path="res://sprite/Player/proppick/WND_trab_bigprop.png" id="4_evl8s"]
 [ext_resource type="Texture2D" uid="uid://bugoywwy8red0" path="res://sprite/Player/proppick/IACOBISIO_bigprop.png" id="5_r7y7g"]
+[ext_resource type="FontFile" uid="uid://fwsspbqoxsdm" path="res://font/kreaturekombatcond.ttf" id="6_font"]
 [ext_resource type="Script" uid="uid://c54ciwtoeq5yx" path="res://SCRIPT/personaggio1.gd" id="7_1yirc"]
+[ext_resource type="Texture2D" uid="uid://cb41iujp3xxr3" path="res://sprite/UI/menu.png" id="7_ecwwl"]
+[ext_resource type="AudioStream" uid="uid://63d70sp7l5ha" path="res://sound/Music/Should of Saw It (Bloodhound Lil Jeff).mp3" id="8_kk3ma"]
 [ext_resource type="Texture2D" uid="uid://x1muolexu8aa" path="res://sprite/Player/proppick/andrix.png" id="9_3fld7"]
 [ext_resource type="Texture2D" uid="uid://dafk75umfnxap" path="res://sprite/Player/proppick/NAKAKATA.png" id="9_naka1"]
+[ext_resource type="Script" uid="uid://ctm85w7f68p35" path="res://SCRIPT/ui_manager.gd" id="10_uimgr"]
+[ext_resource type="Script" uid="uid://bgg5o5d1c1iya" path="res://SCRIPT/pannello_selezione_controlli.gd" id="11_ctrl"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hover"]
 bg_color = Color(0.65098, 0.098039, 0.117647, 0.85)
@@ -53,51 +54,12 @@ corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
-bg_color = Color(0.078431, 0.078431, 0.090196, 0.9)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 8
-border_color = Color(0.65098, 0.098039, 0.117647, 1)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
-shadow_color = Color(0, 0, 0, 0.4)
-shadow_size = 12
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lineedit_normal"]
-bg_color = Color(0.078431, 0.078431, 0.090196, 0.85)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.65098, 0.098039, 0.117647, 1)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
-content_margin_left = 10.0
-content_margin_top = 6.0
-content_margin_right = 10.0
-content_margin_bottom = 6.0
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lineedit_focus"]
-bg_color = Color(0.078431, 0.078431, 0.090196, 0.95)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.94902, 0.784314, 0.184314, 1)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
-content_margin_left = 10.0
-content_margin_top = 6.0
-content_margin_right = 10.0
-content_margin_bottom = 6.0
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_slider_fill"]
+bg_color = Color(0.94902, 0.784314, 0.184314, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_slider_bg"]
 bg_color = Color(0.078431, 0.078431, 0.090196, 0.9)
@@ -111,12 +73,37 @@ corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_slider_fill"]
-bg_color = Color(0.94902, 0.784314, 0.184314, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lineedit_focus"]
+content_margin_left = 10.0
+content_margin_top = 6.0
+content_margin_right = 10.0
+content_margin_bottom = 6.0
+bg_color = Color(0.078431, 0.078431, 0.090196, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.94902, 0.784314, 0.184314, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lineedit_normal"]
+content_margin_left = 10.0
+content_margin_top = 6.0
+content_margin_right = 10.0
+content_margin_bottom = 6.0
+bg_color = Color(0.078431, 0.078431, 0.090196, 0.85)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.65098, 0.098039, 0.117647, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
 
 [sub_resource type="Theme" id="Theme_menu"]
 default_font = ExtResource("6_font")
@@ -134,22 +121,85 @@ Button/styles/pressed = SubResource("StyleBoxFlat_pressed")
 CheckButton/colors/font_color = Color(0.929412, 0.929412, 0.929412, 1)
 CheckButton/colors/font_hover_color = Color(1, 1, 1, 1)
 CheckButton/colors/font_pressed_color = Color(0.94902, 0.784314, 0.184314, 1)
-CheckButton/fonts/font = ExtResource("6_font")
 CheckButton/font_sizes/font_size = 22
-Label/colors/font_color = Color(0.929412, 0.929412, 0.929412, 1)
-Label/fonts/font = ExtResource("6_font")
-Label/font_sizes/font_size = 22
-LineEdit/colors/font_color = Color(0.929412, 0.929412, 0.929412, 1)
-LineEdit/colors/font_placeholder_color = Color(0.6, 0.6, 0.6, 1)
-LineEdit/fonts/font = ExtResource("6_font")
-LineEdit/font_sizes/font_size = 22
-LineEdit/styles/normal = SubResource("StyleBoxFlat_lineedit_normal")
-LineEdit/styles/focus = SubResource("StyleBoxFlat_lineedit_focus")
-HSlider/styles/slider = SubResource("StyleBoxFlat_slider_bg")
+CheckButton/fonts/font = ExtResource("6_font")
 HSlider/styles/grabber_area = SubResource("StyleBoxFlat_slider_fill")
 HSlider/styles/grabber_area_highlight = SubResource("StyleBoxFlat_slider_fill")
+HSlider/styles/slider = SubResource("StyleBoxFlat_slider_bg")
+Label/colors/font_color = Color(0.929412, 0.929412, 0.929412, 1)
+Label/font_sizes/font_size = 22
+Label/fonts/font = ExtResource("6_font")
+LineEdit/colors/font_color = Color(0.929412, 0.929412, 0.929412, 1)
+LineEdit/colors/font_placeholder_color = Color(0.6, 0.6, 0.6, 1)
+LineEdit/font_sizes/font_size = 22
+LineEdit/fonts/font = ExtResource("6_font")
+LineEdit/styles/focus = SubResource("StyleBoxFlat_lineedit_focus")
+LineEdit/styles/normal = SubResource("StyleBoxFlat_lineedit_normal")
 
-[node name="UI" type="Control"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.078431, 0.078431, 0.090196, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 8
+border_color = Color(0.65098, 0.098039, 0.117647, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_color = Color(0, 0, 0, 0.4)
+shadow_size = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ctrl_panel"]
+bg_color = Color(0.078431, 0.078431, 0.090196, 0.95)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.65098, 0.098039, 0.117647, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_color = Color(0, 0, 0, 0.35)
+shadow_size = 10
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ctrl_btn_normal"]
+bg_color = Color(0.13, 0.13, 0.15, 0.6)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ctrl_btn_pressed"]
+bg_color = Color(0.4, 0.054902, 0.070588, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.94902, 0.784314, 0.184314, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ctrl_btn_hover"]
+bg_color = Color(0.65098, 0.098039, 0.117647, 0.85)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.94902, 0.784314, 0.184314, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+anti_aliasing = false
+
+[node name="UI" type="Control" unique_id=699393071]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -159,14 +209,15 @@ grow_vertical = 2
 theme = SubResource("Theme_menu")
 script = ExtResource("10_uimgr")
 
-[node name="MenuPrincipale" type="Node2D" parent="."]
+[node name="MenuPrincipale" type="Node2D" parent="." unique_id=294991573]
+visible = false
 
-[node name="foto" type="Sprite2D" parent="MenuPrincipale"]
+[node name="foto" type="Sprite2D" parent="MenuPrincipale" unique_id=533923786]
 position = Vector2(632.00006, 351.00003)
 scale = Vector2(0.7717372, 0.8223825)
 texture = ExtResource("1_l48gv")
 
-[node name="START" type="Button" parent="MenuPrincipale"]
+[node name="START" type="Button" parent="MenuPrincipale" unique_id=1822983472]
 offset_left = 428.0
 offset_top = 377.0
 offset_right = 848.0
@@ -175,7 +226,7 @@ theme = SubResource("Theme_menu")
 action_mode = 0
 text = "Start"
 
-[node name="ONLINE" type="Button" parent="MenuPrincipale"]
+[node name="ONLINE" type="Button" parent="MenuPrincipale" unique_id=733025482]
 offset_left = 428.0
 offset_top = 465.0
 offset_right = 848.0
@@ -183,7 +234,7 @@ offset_bottom = 535.0
 theme = SubResource("Theme_menu")
 text = "Online"
 
-[node name="IMPOSTAZIONI" type="Button" parent="MenuPrincipale"]
+[node name="IMPOSTAZIONI" type="Button" parent="MenuPrincipale" unique_id=1143011748]
 offset_left = 428.0
 offset_top = 553.0
 offset_right = 848.0
@@ -191,7 +242,7 @@ offset_bottom = 623.0
 theme = SubResource("Theme_menu")
 text = "Impostazioni"
 
-[node name="QUIT" type="Button" parent="MenuPrincipale"]
+[node name="QUIT" type="Button" parent="MenuPrincipale" unique_id=454908315]
 offset_left = 428.0
 offset_top = 641.0
 offset_right = 848.0
@@ -199,16 +250,16 @@ offset_bottom = 711.0
 theme = SubResource("Theme_menu")
 text = "Esci"
 
-[node name="Menu" type="Sprite2D" parent="MenuPrincipale"]
+[node name="Menu" type="Sprite2D" parent="MenuPrincipale" unique_id=1286091423]
 position = Vector2(641.00006, 180.00002)
 scale = Vector2(0.36376953, 0.36376953)
 texture = ExtResource("7_ecwwl")
 
-[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="MenuPrincipale"]
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="MenuPrincipale" unique_id=1376308786]
 stream = ExtResource("8_kk3ma")
 autoplay = true
 
-[node name="Impostazioni" type="Control" parent="."]
+[node name="Impostazioni" type="Control" parent="." unique_id=466851912]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -218,7 +269,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_set01")
 
-[node name="Sfondo" type="ColorRect" parent="Impostazioni"]
+[node name="Sfondo" type="ColorRect" parent="Impostazioni" unique_id=1516916885]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -227,7 +278,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.078431, 0.078431, 0.090196, 1)
 
-[node name="Pannello" type="Panel" parent="Impostazioni"]
+[node name="Pannello" type="Panel" parent="Impostazioni" unique_id=901431453]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -242,7 +293,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
-[node name="Contenitore" type="VBoxContainer" parent="Impostazioni/Pannello"]
+[node name="Contenitore" type="VBoxContainer" parent="Impostazioni/Pannello" unique_id=1346255801]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -255,69 +306,67 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 22
 
-[node name="Titolo" type="Label" parent="Impostazioni/Pannello/Contenitore"]
+[node name="Titolo" type="Label" parent="Impostazioni/Pannello/Contenitore" unique_id=410019140]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.94902, 0.784314, 0.184314, 1)
 theme_override_fonts/font = ExtResource("6_font")
 theme_override_font_sizes/font_size = 32
-theme_override_colors/font_color = Color(0.94902, 0.784314, 0.184314, 1)
 text = "Impostazioni"
 horizontal_alignment = 1
 
-[node name="RigaVolume" type="VBoxContainer" parent="Impostazioni/Pannello/Contenitore"]
+[node name="RigaVolume" type="VBoxContainer" parent="Impostazioni/Pannello/Contenitore" unique_id=1938497834]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="LabelVolume" type="Label" parent="Impostazioni/Pannello/Contenitore/RigaVolume"]
+[node name="LabelVolume" type="Label" parent="Impostazioni/Pannello/Contenitore/RigaVolume" unique_id=458021701]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("6_font")
 text = "Volume: 100%"
 
-[node name="SliderVolume" type="HSlider" parent="Impostazioni/Pannello/Contenitore/RigaVolume"]
+[node name="SliderVolume" type="HSlider" parent="Impostazioni/Pannello/Contenitore/RigaVolume" unique_id=160051252]
 custom_minimum_size = Vector2(0, 28)
 layout_mode = 2
 theme_override_styles/slider = SubResource("StyleBoxFlat_slider_bg")
 theme_override_styles/grabber_area = SubResource("StyleBoxFlat_slider_fill")
 theme_override_styles/grabber_area_highlight = SubResource("StyleBoxFlat_slider_fill")
-max_value = 100.0
 value = 100.0
-step = 1.0
 
-[node name="CheckFullscreen" type="CheckButton" parent="Impostazioni/Pannello/Contenitore"]
+[node name="CheckFullscreen" type="CheckButton" parent="Impostazioni/Pannello/Contenitore" unique_id=178201302]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("6_font")
 text = "Schermo intero"
 
-[node name="Indietro" type="Button" parent="Impostazioni/Pannello/Contenitore"]
-layout_mode = 2
+[node name="Indietro" type="Button" parent="Impostazioni/Pannello/Contenitore" unique_id=802987556]
 custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
 theme = SubResource("Theme_menu")
 text = "Indietro"
 
-[node name="SelezionePersonaggio" type="Node2D" parent="."]
+[node name="SelezionePersonaggio" type="Node2D" parent="." unique_id=764590530]
 visible = false
 script = ExtResource("1_mlc5f")
 
-[node name="CharacterSelectionGenderV0T5Ikpt1Sj45g1" type="Sprite2D" parent="SelezionePersonaggio"]
+[node name="CharacterSelectionGenderV0T5Ikpt1Sj45g1" type="Sprite2D" parent="SelezionePersonaggio" unique_id=1430094592]
 position = Vector2(640, 360.50003)
 scale = Vector2(0.76674634, 0.7683316)
 texture = ExtResource("1_tc7ei")
 
-[node name="AnteprimaP1" type="Sprite2D" parent="SelezionePersonaggio"]
+[node name="AnteprimaP1" type="Sprite2D" parent="SelezionePersonaggio" unique_id=2042834509]
 position = Vector2(56, 422)
 texture = ExtResource("4_evl8s")
 
-[node name="AnteprimaP2" type="Sprite2D" parent="SelezionePersonaggio"]
+[node name="AnteprimaP2" type="Sprite2D" parent="SelezionePersonaggio" unique_id=234503859]
 position = Vector2(1151.2822, 421.28214)
 scale = Vector2(-1.2528716, 1.2528716)
 texture = ExtResource("5_r7y7g")
 
-[node name="Iacobisio" type="Sprite2D" parent="SelezionePersonaggio"]
+[node name="Iacobisio" type="Sprite2D" parent="SelezionePersonaggio" unique_id=163780599]
 z_index = -1
 position = Vector2(347.99997, 300)
 scale = Vector2(0.15353866, 0.1563558)
 texture = ExtResource("2_nvn06")
 
-[node name="bisio" type="Button" parent="SelezionePersonaggio"]
+[node name="bisio" type="Button" parent="SelezionePersonaggio" unique_id=735208603]
 offset_left = 265.0
 offset_top = 201.0
 offset_right = 441.0
@@ -327,13 +376,13 @@ flat = true
 script = ExtResource("7_1yirc")
 skin_id = 1
 
-[node name="WndTrab" type="Sprite2D" parent="SelezionePersonaggio"]
+[node name="WndTrab" type="Sprite2D" parent="SelezionePersonaggio" unique_id=1558649026]
 z_index = -1
 position = Vector2(545, 300)
 scale = Vector2(0.16072817, 0.15289573)
 texture = ExtResource("3_3cjf2")
 
-[node name="tommaso" type="Button" parent="SelezionePersonaggio"]
+[node name="tommaso" type="Button" parent="SelezionePersonaggio" unique_id=1834419878]
 offset_left = 456.0
 offset_top = 200.0
 offset_right = 632.0
@@ -342,13 +391,13 @@ focus_mode = 0
 flat = true
 script = ExtResource("7_1yirc")
 
-[node name="Nakakata" type="Sprite2D" parent="SelezionePersonaggio"]
+[node name="Nakakata" type="Sprite2D" parent="SelezionePersonaggio" unique_id=745900072]
 show_behind_parent = true
 position = Vector2(738.00006, 299.7836)
 scale = Vector2(0.16072817, 0.17099905)
 texture = ExtResource("9_naka1")
 
-[node name="nakakata" type="Button" parent="SelezionePersonaggio"]
+[node name="nakakata" type="Button" parent="SelezionePersonaggio" unique_id=616031664]
 offset_left = 651.0
 offset_top = 199.0
 offset_right = 827.0
@@ -358,13 +407,13 @@ flat = true
 script = ExtResource("7_1yirc")
 skin_id = 2
 
-[node name="andrix2" type="Sprite2D" parent="SelezionePersonaggio"]
+[node name="andrix2" type="Sprite2D" parent="SelezionePersonaggio" unique_id=1827906588]
 show_behind_parent = true
 position = Vector2(918.00006, 309)
 scale = Vector2(0.16072817, 0.17099905)
 texture = ExtResource("9_3fld7")
 
-[node name="andrix" type="Button" parent="SelezionePersonaggio"]
+[node name="andrix" type="Button" parent="SelezionePersonaggio" unique_id=1649277446]
 offset_left = 843.0
 offset_top = 202.0
 offset_right = 1019.0
@@ -374,18 +423,18 @@ flat = true
 script = ExtResource("7_1yirc")
 skin_id = 3
 
-[node name="Label" type="Label" parent="SelezionePersonaggio"]
+[node name="Label" type="Label" parent="SelezionePersonaggio" unique_id=1108000319]
 offset_left = 268.0
 offset_top = 588.0
 offset_right = 1023.0
 offset_bottom = 665.0
+theme_override_colors/font_color = Color(0.929412, 0.929412, 0.929412, 1)
 theme_override_fonts/font = ExtResource("6_font")
 theme_override_font_sizes/font_size = 24
-theme_override_colors/font_color = Color(0.929412, 0.929412, 0.929412, 1)
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Cursore" type="ColorRect" parent="SelezionePersonaggio"]
+[node name="Cursore" type="ColorRect" parent="SelezionePersonaggio" unique_id=2084252729]
 offset_left = 264.0
 offset_top = 203.0
 offset_right = 439.0
@@ -393,7 +442,7 @@ offset_bottom = 381.0
 mouse_filter = 2
 color = Color(0.94902, 0.784314, 0.184314, 0.25)
 
-[node name="Indietro" type="Button" parent="SelezionePersonaggio"]
+[node name="Indietro" type="Button" parent="SelezionePersonaggio" unique_id=1577856411]
 offset_left = 40.0
 offset_top = 650.0
 offset_right = 220.0
@@ -402,7 +451,118 @@ theme = SubResource("Theme_menu")
 theme_override_font_sizes/font_size = 22
 text = "Indietro"
 
-[node name="NetworkMenu" type="Control" parent="."]
+[node name="SelezioneControlli" type="Control" parent="." unique_id=2001387144]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("11_ctrl")
+
+[node name="Sfondo" type="ColorRect" parent="SelezioneControlli" unique_id=35852537]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.078431, 0.078431, 0.090196, 1)
+
+[node name="Pannello" type="Panel" parent="SelezioneControlli" unique_id=2112168526]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -240.0
+offset_top = -214.0
+offset_right = 240.0
+offset_bottom = 240.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ctrl_panel")
+
+[node name="Contenitore" type="VBoxContainer" parent="SelezioneControlli/Pannello" unique_id=1237437149]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = 20.0
+offset_right = -24.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="Titolo" type="Label" parent="SelezioneControlli/Pannello/Contenitore" unique_id=1181183551]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.94902, 0.784314, 0.184314, 1)
+theme_override_fonts/font = ExtResource("6_font")
+theme_override_font_sizes/font_size = 28
+text = "Rilevazione controlli"
+horizontal_alignment = 1
+
+[node name="LabelStato" type="Label" parent="SelezioneControlli/Pannello/Contenitore" unique_id=565585813]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("6_font")
+theme_override_font_sizes/font_size = 20
+text = "Rilevamento in corso..."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="BtnDoppioController" type="Button" parent="SelezioneControlli/Pannello/Contenitore" unique_id=696795388]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_ctrl_btn_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ctrl_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ctrl_btn_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_ctrl_btn_hover")
+text = "Doppio controller"
+
+[node name="BtnTastieraController" type="Button" parent="SelezioneControlli/Pannello/Contenitore" unique_id=1323744816]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_ctrl_btn_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ctrl_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ctrl_btn_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_ctrl_btn_hover")
+text = "Tastiera + controller"
+
+[node name="BtnDoppiaTastiera" type="Button" parent="SelezioneControlli/Pannello/Contenitore" unique_id=198147022]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_ctrl_btn_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ctrl_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ctrl_btn_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_ctrl_btn_hover")
+text = "Doppia tastiera (WASD / Frecce)"
+
+[node name="BtnConferma" type="Button" parent="SelezioneControlli/Pannello/Contenitore" unique_id=306210161]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_ctrl_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ctrl_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ctrl_btn_pressed")
+theme_override_styles/focus = SubResource("StyleBoxFlat_ctrl_btn_pressed")
+text = "Conferma"
+
+[node name="Indietro" type="Button" parent="SelezioneControlli/Pannello/Contenitore" unique_id=762424077]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_ctrl_btn_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ctrl_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ctrl_btn_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_ctrl_btn_hover")
+text = "Indietro"
+
+[node name="NetworkMenu" type="Control" parent="." unique_id=1423719476]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -412,7 +572,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_netm")
 
-[node name="Sfondo" type="ColorRect" parent="NetworkMenu"]
+[node name="Sfondo" type="ColorRect" parent="NetworkMenu" unique_id=184726971]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -421,7 +581,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.078431, 0.078431, 0.090196, 1)
 
-[node name="VBox" type="VBoxContainer" parent="NetworkMenu"]
+[node name="VBox" type="VBoxContainer" parent="NetworkMenu" unique_id=1497244866]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -436,39 +596,40 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 16
 
-[node name="IPField" type="LineEdit" parent="NetworkMenu/VBox"]
+[node name="IPField" type="LineEdit" parent="NetworkMenu/VBox" unique_id=159434696]
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_lineedit_normal")
 theme_override_styles/focus = SubResource("StyleBoxFlat_lineedit_focus")
-placeholder_text = "IP dell'host (es. 93.45.12.10)"
+placeholder_text = "IP dell'host (LAN, Hamachi, Radmin o Tailscale, es. 100.x.x.x)"
 
-[node name="HostButton" type="Button" parent="NetworkMenu/VBox"]
+[node name="HostButton" type="Button" parent="NetworkMenu/VBox" unique_id=1451337282]
 layout_mode = 2
 theme = SubResource("Theme_menu")
 text = "Ospita partita"
 
-[node name="JoinButton" type="Button" parent="NetworkMenu/VBox"]
+[node name="JoinButton" type="Button" parent="NetworkMenu/VBox" unique_id=1631214357]
 layout_mode = 2
 theme = SubResource("Theme_menu")
 text = "Unisciti a partita"
 
-[node name="StatusLabel" type="Label" parent="NetworkMenu/VBox"]
+[node name="StatusLabel" type="Label" parent="NetworkMenu/VBox" unique_id=1690647608]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("6_font")
 autowrap_mode = 2
-text = ""
 
-[node name="Indietro" type="Button" parent="NetworkMenu/VBox"]
-layout_mode = 2
+[node name="Indietro" type="Button" parent="NetworkMenu/VBox" unique_id=805296258]
 custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
 theme = SubResource("Theme_menu")
 theme_override_font_sizes/font_size = 22
 text = "Indietro"
 
-[connection signal="pressed" from="MenuPrincipale/START" to="." method="mostra_selezione_personaggio"]
+[connection signal="pressed" from="MenuPrincipale/START" to="." method="mostra_selezione_controlli"]
 [connection signal="pressed" from="MenuPrincipale/ONLINE" to="." method="mostra_network_menu"]
 [connection signal="pressed" from="MenuPrincipale/IMPOSTAZIONI" to="." method="mostra_impostazioni"]
 [connection signal="pressed" from="MenuPrincipale/QUIT" to="." method="esci_gioco"]
 [connection signal="pressed" from="Impostazioni/Pannello/Contenitore/Indietro" to="." method="torna_al_menu"]
 [connection signal="pressed" from="SelezionePersonaggio/Indietro" to="." method="torna_al_menu"]
+[connection signal="configurazione_scelta" from="SelezioneControlli" to="." method="mostra_selezione_personaggio"]
+[connection signal="pressed" from="SelezioneControlli/Pannello/Contenitore/Indietro" to="." method="torna_al_menu"]
 [connection signal="pressed" from="NetworkMenu/VBox/Indietro" to="." method="torna_al_menu"]

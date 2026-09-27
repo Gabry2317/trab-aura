@@ -30,6 +30,12 @@ const PREVIEW_SCALE := {
 var slots: Array = []
 var cursor_index: int = 0
 
+# tempo minimo (in secondi) tra un movimento del cursore e il successivo:
+# senza questo, tenendo la levetta/D-pad il cursore scatta a ripetizione
+# molto più velocemente di quanto succeda con una singola pressione tastiera.
+const TEMPO_TRA_MOVIMENTI := 0.18
+var _tempo_ultimo_movimento: float = -999.0
+
 
 func _ready() -> void:
 	slots = [
@@ -39,30 +45,97 @@ func _ready() -> void:
 		{"skin": 3, "btn": andrix_btn},
 	]
 
-	# il mouse continua a funzionare: passandoci sopra sposta anche il cursore a freccette
+	# il mouse funziona SOLO quando è il turno del giocatore assegnato a tastiera
+	# (vedi _mouse_abilitato): se tocca al giocatore col controller, hover e click
+	# sono completamente ignorati.
 	bisio_btn.mouse_entered.connect(_hover_to.bind(0))
 	tommaso_btn.mouse_entered.connect(_hover_to.bind(1))
 	nakakata_btn.mouse_entered.connect(_hover_to.bind(2))
 	andrix_btn.mouse_entered.connect(_hover_to.bind(3))
+
+	bisio_btn.pressed.connect(_click_to.bind(0))
+	tommaso_btn.pressed.connect(_click_to.bind(1))
+	nakakata_btn.pressed.connect(_click_to.bind(2))
+	andrix_btn.pressed.connect(_click_to.bind(3))
 
 	GameState.selection_changed.connect(_refresh)
 	_refresh()
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_left"):
-		cursor_index = (cursor_index - 1 + slots.size()) % slots.size()
-		_update_cursor()
-	elif event.is_action_pressed("ui_right"):
-		cursor_index = (cursor_index + 1) % slots.size()
-		_update_cursor()
-	elif event.is_action_pressed("ui_accept"):
-		GameState.choose_skin(slots[cursor_index].skin)
+	# Solo il dispositivo assegnato al giocatore di turno può muovere il
+	# cursore o confermare: l'altro dispositivo viene ignorato del tutto,
+	# anche se preme gli stessi tasti/pulsanti di default di Godot.
+	var assegnazione: Dictionary = Controlli.i().assegnazioni.get(GameState.selecting_player, {})
+	if assegnazione.is_empty():
+		return
+
+	if assegnazione.tipo == "controller":
+		_gestisci_controller(event, assegnazione)
+	else:
+		_gestisci_tastiera(event, assegnazione)
+
+
+func _gestisci_tastiera(event: InputEvent, assegnazione: Dictionary) -> void:
+	if not (event is InputEventKey) or not event.pressed or event.echo:
+		return
+	var mappa: Dictionary = assegnazione.mappa
+	if event.keycode == mappa.sinistra:
+		_muovi(-1)
+	elif event.keycode == mappa.destra:
+		_muovi(1)
+	elif event.keycode == KEY_KP_0:
+		_conferma()
+
+
+func _gestisci_controller(event: InputEvent, assegnazione: Dictionary) -> void:
+	var device: int = assegnazione.device
+
+	if event is InputEventJoypadButton and event.device == device and event.pressed:
+		if event.button_index == JOY_BUTTON_DPAD_LEFT:
+			_muovi(-1)
+		elif event.button_index == JOY_BUTTON_DPAD_RIGHT:
+			_muovi(1)
+		elif event.button_index == JOY_BUTTON_A or event.button_index == JOY_BUTTON_X:
+			_conferma()
+	elif event is InputEventJoypadMotion and event.device == device and event.axis == JOY_AXIS_LEFT_X:
+		if event.axis_value < -0.5:
+			_muovi(-1)
+		elif event.axis_value > 0.5:
+			_muovi(1)
+
+
+func _muovi(direzione: int) -> void:
+	var adesso := Time.get_ticks_msec() / 1000.0
+	if adesso - _tempo_ultimo_movimento < TEMPO_TRA_MOVIMENTI:
+		return
+	_tempo_ultimo_movimento = adesso
+	cursor_index = (cursor_index + direzione + slots.size()) % slots.size()
+	_update_cursor()
+
+
+func _conferma() -> void:
+	GameState.choose_skin(slots[cursor_index].skin)
+
+
+func _mouse_abilitato() -> bool:
+	var assegnazione: Dictionary = Controlli.i().assegnazioni.get(GameState.selecting_player, {})
+	return assegnazione.get("tipo", "") == "tastiera"
 
 
 func _hover_to(index: int) -> void:
+	if not _mouse_abilitato():
+		return
 	cursor_index = index
 	_update_cursor()
+
+
+func _click_to(index: int) -> void:
+	if not _mouse_abilitato():
+		return
+	cursor_index = index
+	_update_cursor()
+	_conferma()
 
 
 func _refresh() -> void:

@@ -187,6 +187,51 @@ func _match_action(pid: int, event: InputEvent) -> String:
 		var action: String = prefix + suffix
 		if InputMap.has_action(action) and event.is_action_pressed(action):
 			return suffix
+	return _match_pad_action(pid, event)
+
+
+# NUOVO: la tastiera passa dall'Input Map (sopra), ma i pulsanti del PAD no:
+# project.godot non ha NESSUN evento joypad assegnato a p1_attack/p2_attack/
+# p1_secondary/p2_secondary (voluto: un'azione con device "qualsiasi"
+# scatterebbe per entrambi i pad se ce ne sono 2 collegati). Prima di questa
+# funzione, quindi, un input da pad non finiva MAI nel buffer della combo:
+# non solo Quadrato, nessun pulsante, R1 incluso. Qui leggiamo l'evento
+# joypad grezzo e lo confrontiamo col device_id REALMENTE assegnato a questo
+# player_id, con la STESSA mappatura tasti usata in player.gd (attacco =
+# R1 o Quadrato, "secondary"/blocco = Cerchio, salto = Croce, run = L1).
+func _match_pad_action(pid: int, event: InputEvent) -> String:
+	var p: Player = _find_player(pid)
+	if p == null or p.device_id < 0:
+		return ""  # player su tastiera: gia' gestito da _match_action sopra
+	if event is InputEventJoypadButton:
+		if event.device != p.device_id or not event.pressed:
+			return ""
+		match event.button_index:
+			JOY_BUTTON_A:
+				return "jump"
+			JOY_BUTTON_LEFT_SHOULDER:
+				return "run"
+			JOY_BUTTON_RIGHT_SHOULDER, JOY_BUTTON_X:
+				return "attack"     # R1 o Quadrato: stessa coppia usata in player.gd
+			JOY_BUTTON_B:
+				return "secondary"  # Cerchio
+			JOY_BUTTON_DPAD_DOWN:
+				return "down"
+			JOY_BUTTON_DPAD_LEFT:
+				return "left"
+			JOY_BUTTON_DPAD_RIGHT:
+				return "right"
+	elif event is InputEventJoypadMotion and event.device == p.device_id:
+		# soglia alta apposta: qui serve un movimento deciso dello stick, non
+		# il rumore/drift a riposo (vedi il fix della deadzone in player.gd)
+		const AXIS_DEADZONE := 0.5
+		if event.axis == JOY_AXIS_LEFT_X:
+			if event.axis_value > AXIS_DEADZONE:
+				return "right"
+			elif event.axis_value < -AXIS_DEADZONE:
+				return "left"
+		elif event.axis == JOY_AXIS_LEFT_Y and event.axis_value > AXIS_DEADZONE:
+			return "down"
 	return ""
 
 

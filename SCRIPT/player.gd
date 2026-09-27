@@ -135,7 +135,19 @@ var hitbox_base_x: float  # X originale della shape (in editor)
 func _enter_tree() -> void:
 	# NUOVO: capisce da solo se la partita è online e se questo player_id è
 	# quello controllato da QUESTO PC (host = sempre player_id 0)
-	is_networked = multiplayer.has_multiplayer_peer()
+	# NOTA: has_multiplayer_peer() da solo NON basta. Se il progetto crea un
+	# MultiplayerPeer anche in locale (es. l'host viene sempre istanziato per
+	# poter riusare la stessa architettura, anche quando in realta' si gioca
+	# in 2 sulla stessa tastiera/pad), has_multiplayer_peer() risultava vero
+	# per ENTRAMBI i player: player2 (player_id=1) veniva quindi trattato come
+	# "remoto" (is_local=false, vedi sotto) e restava in attesa di input dalla
+	# rete invece di leggere la tastiera/pad locale. Una partita e' DAVVERO
+	# online solo se: (a) siamo un client (non l'host), oppure (b) siamo
+	# l'host e c'e' almeno un peer remoto connesso. Se l'host non ha nessuno
+	# connesso (caso locale/offline), non e' rete: tutti i player leggono i
+	# loro input locali (p1_*/p2_*/pad), com'era prima che esistesse il multiplayer.
+	is_networked = multiplayer.has_multiplayer_peer() \
+		and (not multiplayer.is_server() or not multiplayer.get_peers().is_empty())
 	if is_networked:
 		is_local = (player_id == 0) == multiplayer.is_server()
 
@@ -634,7 +646,20 @@ func _get_direction() -> float:
 		-2:
 			return Input.get_axis("p2_left", "p2_right")
 		_:
-			return Input.get_joy_axis(device_id, JOY_AXIS_LEFT_X)
+			# get_joy_axis() legge il valore GREZZO dello stick, senza la deadzone
+			# che invece Godot applica automaticamente alle azioni (p1_left/p1_right):
+			# a riposo lo stick manda comunque un po' di rumore/drift (es. 0.01-0.06,
+			# a volte anche di segno opposto da un frame all'altro). Senza deadzone
+			# quel rumore veniva letto come "direzione" valida: il personaggio si
+			# muoveva a scatti e si girava (flip_h) ogni volta che il segno cambiava
+			# ("spasmi"). Sotto JOY_DEADZONE consideriamo lo stick fermo (0.0).
+			const JOY_DEADZONE := 0.25
+			var v: float = Input.get_joy_axis(device_id, JOY_AXIS_LEFT_X)
+			if absf(v) < JOY_DEADZONE:
+				v = 0.0
+			if Engine.get_physics_frames() % 30 == 0:
+				print("[DEBUG] ", name, " device_id=", device_id, " joy_axis=", v, " joypads connessi=", Input.get_connected_joypads())
+			return v
 
 
 func _jump_just_pressed() -> bool:
@@ -658,7 +683,12 @@ func _attack_just_pressed() -> bool:
 		-2:
 			return Input.is_action_just_pressed("p2_attack")
 		_:
-			return Input.is_joy_button_pressed(device_id, JOY_BUTTON_RIGHT_SHOULDER)
+			# Attacco da pad: sia R1 che Quadrato (JOY_BUTTON_X) devono funzionare.
+			# Prima c'era solo il dorsale (R1): il Quadrato non veniva letto affatto,
+			# quindi non attivava ne' l'attacco ne' (di conseguenza) la fatality,
+			# che scatta sullo stesso colpo quando l'avversario e' "downed".
+			return Input.is_joy_button_pressed(device_id, JOY_BUTTON_RIGHT_SHOULDER) \
+				or Input.is_joy_button_pressed(device_id, JOY_BUTTON_X)
 
 
 # pressione singola del tasto "secondary" (tasto destro / p1_secondary,
@@ -699,7 +729,10 @@ func _block_pressed() -> bool:
 		-2:
 			return Input.is_action_pressed("p2_secondary")
 		_:
-			return Input.is_joy_button_pressed(device_id, JOY_BUTTON_X)
+			# Cerchio (JOY_BUTTON_B), come "parata" nello schema di Controlli
+			# (controlli_manager.gd). Prima era su Quadrato (JOY_BUTTON_X), in
+			# conflitto col nuovo uso di Quadrato per l'attacco pesante.
+			return Input.is_joy_button_pressed(device_id, JOY_BUTTON_B)
 
 
 # Gestisce il tasto "secondary" per i poteri con attacco caricato (vedi
@@ -728,6 +761,8 @@ func _update_charged_secondary(delta: float) -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if Engine.get_physics_frames() % 30 == 0:
+		print("[DEBUG] ", name, " player_id=", player_id, " device_id=", device_id, " combat_locked=", combat_locked, " is_dead=", is_dead, " is_networked=", is_networked)
 	if combat_locked or is_dead:
 		return  # in corso una cinematica fatality (o gia' morto): niente input/fisica
 	if is_networked:

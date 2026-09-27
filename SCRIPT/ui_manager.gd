@@ -8,12 +8,16 @@ extends Control
 @onready var impostazioni: Control = $Impostazioni
 @onready var selezione_personaggio: Node2D = $SelezionePersonaggio
 @onready var network_menu: Control = $NetworkMenu
+@onready var selezione_controlli: Control = $SelezioneControlli
 
 func _ready() -> void:
 	_mostra_solo(menu_principale)
 
 func mostra_menu_principale() -> void:
 	_mostra_solo(menu_principale)
+
+func mostra_selezione_controlli() -> void:
+	_mostra_solo(selezione_controlli)
 
 func mostra_selezione_personaggio() -> void:
 	# toselect.gd inizializzava lo stato tramite l'autoload GameState
@@ -38,5 +42,5 @@ func esci_gioco() -> void:
 	get_tree().quit()
 
 func _mostra_solo(pannello_da_mostrare: Node) -> void:
-	for pannello in [menu_principale, impostazioni, selezione_personaggio, network_menu]:
+	for pannello in [menu_principale, impostazioni, selezione_personaggio, network_menu, selezione_controlli]:
 		pannello.visible = (pannello == pannello_da_mostrare)
