@@ -1,5 +1,5 @@
 78098b89c88a74ebe8c20117b8754620
-::res://::1790533930
+::res://::1791370409
 fine_partita.tscn::PackedScene::-1::1790190355::0::1::::<><><>0<>0<><>::res://SCRIPT/fine_partita.gd
 icon.svg::CompressedTexture2D::7753162241153918996::1790190355::1790190393::1::::<><><>0<>0<>36401000913a816c90d6fa8960f7c0c5<>res://.godot/imported/icon.svg-218a8f2b3041327d8a5756f3a245f83b.ctex::
 level.tscn::PackedScene::3923760141297234644::1790423444::0::1::::<><><>0<>0<><>::uid://mhl02pc621y3::::res://SCRIPT/level.gd<>uid://6vjo4ox45rkw::::res://sprite/map/hell/background.png<>uid://bspnwas72g4u5::::res://WND_trab.tscn<>uid://brag415xffcvp::::res://SCRIPT/camera_2d.gd<>uid://8op4kve3x2dj::::res://sprite/map/hell/ChatGPT Image 21 set 2026, 17_11_34.png<>uid://b0cyo0iy8oxo2::::res://sprite/map/dojo/alex_bach.png<>uid://cle5mxerbfvit::::res://sprite/map/dojo/alex.png<>res://fine_partita.tscn<>uid://cvxc68pr2ya60::::res://sound/Music/Seve me (A7X).mp3<>uid://def4douxfq3ly::::res://SCRIPT/healt_bar.gd<>uid://gupe7veoh058::::res://SCRIPT/stamina_bar.gd<>uid://fwsspbqoxsdm::::res://font/kreaturekombatcond.ttf
@@ -15,7 +15,7 @@ naka.cfg::TextFile::-1::1790359691::0::1::::<><><>0<>0<><>::
 trab.cfg::TextFile::-1::1790379820::0::1::::<><><>0<>0<><>::
 ::res://font/::1790417999
 kreaturekombatcond.ttf::FontFile::397486369081218450::1536322102::1790417999::1::::<><><>0<>0<>295d55db2c8869396cb8f7bf0408baf0<>res://.godot/imported/kreaturekombatcond.ttf-908a378b3d52996991fbc2c713d570a6.fontdata::
-::res://SCRIPT/::1790533902
+::res://SCRIPT/::1790534555
 camera_2d.gd::GDScript::3580048528522624569::1790197554::0::1::::<>Camera2D<><>0<>0<><>::
 controlli_manager.gd::GDScript::5159927889177947458::1790418174::0::1::::Controlli<>RefCounted<><>0<>0<><>::
 fatality_manager.gd::GDScript::1146870177774961714::1790528625::0::1::::<>Node<><>0<>0<><>::
@@ -27,11 +27,11 @@ hurtbox.gd::GDScript::8036572649234527661::1790197554::0::1::::Hurtbox<>Area2D<>
 impostazioni.gd::GDScript::8982525585493457412::1790423097::0::1::::<>Control<><>0<>0<><>::
 level.gd::GDScript::857430741138770044::1790525494::0::1::::<>Node<><>0<>0<><>::
 Network.gd::GDScript::5307615198409151555::1790387208::0::1::::<>Node<><>0<>0<><>::
-network_manager.gd::GDScript::339010515338649331::1790533881::0::1::::<>Node<><>0<>0<><>::
-network_menu.gd::GDScript::290092126900789178::1790533881::0::1::::<>Control<><>0<>0<><>::
+network_manager.gd::GDScript::339010515338649331::1790534555::0::1::::<>Node<><>0<>0<><>::
+network_menu.gd::GDScript::290092126900789178::1790534555::0::1::::<>Control<><>0<>0<><>::
 pannello_selezione_controlli.gd::GDScript::2821788104463259712::1790525193::0::1::::<>Control<><>0<>0<><>::
 personaggio1.gd::GDScript::1169508704962588052::1790520080::0::1::::<>Button<><>0<>0<><>::
-player.gd::GDScript::6743365634200600811::1790528230::0::1::::Player<>CharacterBody2D<><>0<>0<><>::
+player.gd::GDScript::6743365634200600811::1790534555::0::1::::Player<>CharacterBody2D<><>0<>0<><>::
 punch_hitbox_trab.gd::GDScript::561772414198396007::1790197554::0::1::::Hitbox<>Area2D<><>0<>0<><>::
 selezione_personaggio.gd::GDScript::5366827143245217765::1790520081::0::1::::<>Node2D<><>0<>0<><>::
 stamina_bar.gd::GDScript::463340228365359193::1790197554::0::1::::<>ProgressBar<><>0<>0<><>::
