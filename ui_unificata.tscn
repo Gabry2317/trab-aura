@@ -18,6 +18,8 @@
 [ext_resource type="Script" uid="uid://ctm85w7f68p35" path="res://SCRIPT/ui_manager.gd" id="10_uimgr"]
 [ext_resource type="Script" uid="uid://bgg5o5d1c1iya" path="res://SCRIPT/pannello_selezione_controlli.gd" id="11_ctrl"]
 
+[ext_resource type="Script" path="res://SCRIPT/selettore_mappa.gd" id="12_map"]
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hover"]
 bg_color = Color(0.65098, 0.098039, 0.117647, 0.85)
 border_width_left = 2
@@ -624,6 +626,116 @@ theme = SubResource("Theme_menu")
 theme_override_font_sizes/font_size = 22
 text = "Indietro"
 
+[node name="SelezioneMappa" type="Control" parent="." unique_id=910000001]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("12_map")
+
+[node name="Sfondo" type="ColorRect" parent="SelezioneMappa" unique_id=910000002]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.078431, 0.078431, 0.090196, 1)
+
+[node name="Titolo" type="Label" parent="SelezioneMappa" unique_id=910000003]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -400.0
+offset_top = 90.0
+offset_right = 400.0
+offset_bottom = 150.0
+grow_horizontal = 2
+theme_override_fonts/font = ExtResource("6_font")
+theme_override_font_sizes/font_size = 36
+text = "Giocatore 1: scegli la mappa"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Griglia" type="GridContainer" parent="SelezioneMappa" unique_id=910000004]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -440.0
+offset_top = -130.0
+offset_right = 440.0
+offset_bottom = 130.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/h_separation = 16
+theme_override_constants/v_separation = 16
+columns = 4
+
+[node name="Mappa1" type="Button" parent="SelezioneMappa/Griglia" unique_id=910000011]
+custom_minimum_size = Vector2(205, 120)
+layout_mode = 2
+theme = SubResource("Theme_menu")
+text = "Mappa 1"
+
+[node name="Mappa2" type="Button" parent="SelezioneMappa/Griglia" unique_id=910000012]
+custom_minimum_size = Vector2(205, 120)
+layout_mode = 2
+theme = SubResource("Theme_menu")
+text = "Mappa 2"
+
+[node name="Mappa3" type="Button" parent="SelezioneMappa/Griglia" unique_id=910000013]
+custom_minimum_size = Vector2(205, 120)
+layout_mode = 2
+theme = SubResource("Theme_menu")
+text = "Mappa 3"
+
+[node name="Mappa4" type="Button" parent="SelezioneMappa/Griglia" unique_id=910000014]
+custom_minimum_size = Vector2(205, 120)
+layout_mode = 2
+theme = SubResource("Theme_menu")
+text = "Mappa 4"
+
+[node name="Mappa5" type="Button" parent="SelezioneMappa/Griglia" unique_id=910000015]
+custom_minimum_size = Vector2(205, 120)
+layout_mode = 2
+theme = SubResource("Theme_menu")
+text = "Mappa 5"
+
+[node name="Mappa6" type="Button" parent="SelezioneMappa/Griglia" unique_id=910000016]
+custom_minimum_size = Vector2(205, 120)
+layout_mode = 2
+theme = SubResource("Theme_menu")
+text = "Mappa 6"
+
+[node name="Mappa7" type="Button" parent="SelezioneMappa/Griglia" unique_id=910000017]
+custom_minimum_size = Vector2(205, 120)
+layout_mode = 2
+theme = SubResource("Theme_menu")
+text = "Mappa 7"
+
+[node name="Random" type="Button" parent="SelezioneMappa/Griglia" unique_id=910000018]
+custom_minimum_size = Vector2(205, 120)
+layout_mode = 2
+theme = SubResource("Theme_menu")
+text = "RANDOM"
+
+[node name="Indietro" type="Button" parent="SelezioneMappa" unique_id=910000019]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 650.0
+offset_right = 220.0
+offset_bottom = 700.0
+theme = SubResource("Theme_menu")
+theme_override_font_sizes/font_size = 22
+text = "Indietro"
+
 [connection signal="pressed" from="MenuPrincipale/START" to="." method="mostra_selezione_controlli"]
 [connection signal="pressed" from="MenuPrincipale/ONLINE" to="." method="mostra_network_menu"]
 [connection signal="pressed" from="MenuPrincipale/IMPOSTAZIONI" to="." method="mostra_impostazioni"]
@@ -633,3 +745,4 @@ text = "Indietro"
 [connection signal="configurazione_scelta" from="SelezioneControlli" to="." method="mostra_selezione_personaggio"]
 [connection signal="pressed" from="SelezioneControlli/Pannello/Contenitore/Indietro" to="." method="torna_al_menu"]
 [connection signal="pressed" from="NetworkMenu/VBox/Indietro" to="." method="torna_al_menu"]
+[connection signal="pressed" from="SelezioneMappa/Indietro" to="." method="torna_al_menu"]
