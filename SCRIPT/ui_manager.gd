@@ -33,9 +33,9 @@ func mostra_impostazioni() -> void:
 
 func torna_al_menu() -> void:
 	# Se si torna al menu dalla schermata di rete con una connessione avviata
-	# (host o client), la chiudiamo: Network.leave_game() non fa nulla se
+	# (host o client), la chiudiamo: Network.stop() non fa nulla se
 	# non c'era nessuna connessione attiva.
-	Network.leave_game()
+	Network.stop()
 	_mostra_solo(menu_principale)
 
 func esci_gioco() -> void:
