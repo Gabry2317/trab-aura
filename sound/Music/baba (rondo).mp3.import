@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://syk1h6y8f5lg"
+path="res://.godot/imported/baba (rondo).mp3-a3558648572a53473caa74db3c5ab42c.mp3str"
+
+[deps]
+
+source_file="res://sound/Music/baba (rondo).mp3"
+dest_files=["res://.godot/imported/baba (rondo).mp3-a3558648572a53473caa74db3c5ab42c.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

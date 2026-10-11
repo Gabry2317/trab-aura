@@ -9,8 +9,11 @@ extends Control
 @onready var selezione_personaggio: Node2D = $SelezionePersonaggio
 @onready var network_menu: Control = $NetworkMenu
 @onready var selezione_controlli: Control = $SelezioneControlli
+@onready var selezione_mappa: Control = $SelezioneMappa
 
 func _ready() -> void:
+	GameState.selection_finished.connect(mostra_selezione_mappa)
+	selezione_mappa.mappa_scelta.connect(_on_mappa_scelta)
 	_mostra_solo(menu_principale)
 
 func mostra_menu_principale() -> void:
@@ -24,6 +27,13 @@ func mostra_selezione_personaggio() -> void:
 	# prima di mostrare la schermata: manteniamo lo stesso comportamento.
 	GameState.start_selection()
 	_mostra_solo(selezione_personaggio)
+
+func mostra_selezione_mappa() -> void:
+	_mostra_solo(selezione_mappa)
+
+func _on_mappa_scelta(_mappa: Dictionary) -> void:
+	# la mappa resta in SelettoreMappa.corrente, da leggere nel livello
+	get_tree().change_scene_to_file("res://level.tscn")
 
 func mostra_network_menu() -> void:
 	_mostra_solo(network_menu)
@@ -42,5 +52,5 @@ func esci_gioco() -> void:
 	get_tree().quit()
 
 func _mostra_solo(pannello_da_mostrare: Node) -> void:
-	for pannello in [menu_principale, impostazioni, selezione_personaggio, network_menu, selezione_controlli]:
+	for pannello in [menu_principale, impostazioni, selezione_personaggio, network_menu, selezione_controlli, selezione_mappa]:
 		pannello.visible = (pannello == pannello_da_mostrare)

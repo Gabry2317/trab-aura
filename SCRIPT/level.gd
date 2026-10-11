@@ -11,6 +11,7 @@ var players_per_id: Dictionary = {}  # player_id -> Player
 
 
 func _ready() -> void:
+	_applica_mappa()
 	_applica_controlli()
 
 	# ascolta la morte di ogni player, indicizzandolo per player_id
@@ -20,6 +21,27 @@ func _ready() -> void:
 			p.died.connect(_on_player_died)
 
 	_aggiorna_label_timer()
+
+
+# Tiene solo background/tilemap della mappa scelta (definite in data/mappe.cfg)
+# e imposta la musica. Se il livello parte da solo (test) usa la prima mappa.
+func _applica_mappa() -> void:
+	var tutte := SelettoreMappa.carica_mappe()
+	if tutte.is_empty():
+		return
+	var scelta: Dictionary = SelettoreMappa.corrente if not SelettoreMappa.corrente.is_empty() else tutte[0]
+	for m in tutte:
+		if m.id == scelta.id:
+			continue
+		for chiave in ["background_node", "tilemap_node"]:
+			var n := get_node_or_null(NodePath(m[chiave]))
+			if n:
+				n.queue_free()
+	if scelta.musica != "" and ResourceLoader.exists(scelta.musica):
+		var player: AudioStreamPlayer = $AudioStreamPlayer
+		player.stop()
+		player.stream = load(scelta.musica)
+		player.play()
 
 
 # NUOVO: traduce la configurazione scelta nel pannello "Rilevazione controlli"

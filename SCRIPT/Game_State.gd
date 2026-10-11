@@ -3,6 +3,9 @@ extends Node
 # Emesso quando cambia il player che sta scegliendo il personaggio
 signal selection_changed
 
+# Emesso quando entrambi i player hanno scelto il personaggio
+signal selection_finished
+
 const PLAYER_COUNT: int = 2
 
 # --- Impostazioni (volume / schermo intero), salvate su disco ---
@@ -114,6 +117,6 @@ func choose_skin(skin: int) -> void:
 	set_player_config(selecting_player, skin, get_device_for(selecting_player))
 	selecting_player += 1
 	if selecting_player >= PLAYER_COUNT:
-		get_tree().change_scene_to_file("res://level.tscn")
+		selection_finished.emit()
 	else:
 		selection_changed.emit()
