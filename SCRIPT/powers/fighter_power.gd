@@ -23,7 +23,7 @@ var cooldown_left: float = 0.0
 # valida in [secondary] del .cfg. "cooldown" (secondi) e' gestito dalla base,
 # "stamina_cost" e "stamina_min" pure (vedi can_use()/use() sotto).
 func default_params() -> Dictionary:
-	return {"cooldown": 1.0, "stamina_cost": 0.0, "stamina_min": 0.0}
+	return {"cooldown": 5.0, "stamina_cost": 0.0, "stamina_min": 0.0}
 
 
 func setup(owner_player, values: Dictionary) -> void:

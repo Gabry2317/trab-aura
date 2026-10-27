@@ -15,7 +15,7 @@ var _cast_left: float = 0.0      # secondi in cui il player resta fermo dopo il 
 func default_params() -> Dictionary:
 	return {
 		"damage": 1,                 # danno di OGNI coltello che colpisce l'avversario
-		"cooldown": 1.5,              # secondi tra un lancio e il successivo
+		"cooldown": 5.0,              # secondi tra un lancio e il successivo
 		"stamina_min": 25.0,          # stamina minima per poter lanciare
 		"stamina_cost": 25.0,         # stamina consumata a ogni lancio
 		"sprite": "res://sprite/Player/Andrix/coltello/coltello.png",
