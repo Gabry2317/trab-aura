@@ -19,6 +19,8 @@
 [ext_resource type="Script" uid="uid://bgg5o5d1c1iya" path="res://SCRIPT/pannello_selezione_controlli.gd" id="11_ctrl"]
 
 [ext_resource type="Script" path="res://SCRIPT/selettore_mappa.gd" id="12_map"]
+[ext_resource type="Texture2D" path="res://sprite/Player/proppick/mencu_icon.png" id="13_mencu"]
+[ext_resource type="Texture2D" path="res://sprite/Player/proppick/mencu_proppic.png" id="14_mencu_prop"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hover"]
 bg_color = Color(0.65098, 0.098039, 0.117647, 0.85)
@@ -424,6 +426,22 @@ focus_mode = 0
 flat = true
 script = ExtResource("7_1yirc")
 skin_id = 3
+
+[node name="MencuSprite" type="Sprite2D" parent="SelezionePersonaggio"]
+z_index = -1
+position = Vector2(348, 470)
+scale = Vector2(0.12, 0.12)
+texture = ExtResource("13_mencu")
+
+[node name="mencu" type="Button" parent="SelezionePersonaggio"]
+offset_left = 265.0
+offset_top = 390.0
+offset_right = 441.0
+offset_bottom = 550.0
+focus_mode = 0
+flat = true
+script = ExtResource("7_1yirc")
+skin_id = 4
 
 [node name="Label" type="Label" parent="SelezionePersonaggio" unique_id=1108000319]
 offset_left = 268.0

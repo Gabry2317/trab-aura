@@ -29,6 +29,11 @@ var stamina_hit_gain: float = 8.0          # guadagnata quando il pugno normale 
 
 # --- feedback dei colpi (vedi _play_hit_feedback) ---
 var hit_knockback: float = 220.0       # rinculo: velocita' orizzontale della spinta subita
+var attack_knockback: float = 220.0   # forza della spinta inflitta al bersaglio
+var _current_attack_animation: String = "hit"
+var attack_dash_speed: float = 0.0
+var attack_dash_duration: float = 0.0
+var _attack_dash_left: float = 0.0
 var hit_stun_duration: float = 0.25    # stordimento: per quanti secondi non si risponde ai comandi
 var hit_flash_duration: float = 0.12   # per quanti secondi lo sprite resta colorato dopo il colpo
 var hit_flash_color: Color = Color(1.0, 0.35, 0.35, 1.0)  # colore del lampo (default: rossastro)
@@ -54,6 +59,8 @@ var block_damage_reduction: float = 0.3  # % di danno ancora subita mentre si bl
 # skin_override: -1 = usa GameState, altrimenti forza la skin per questo player
 @export var skin_override: int = -1
 
+var _run_trail_clock: float = 0.0
+var _was_on_floor: bool = true
 var isHurt: bool = false  # true mentre dura lo stordimento da colpo subito (vedi hurt_stun_left)
 var isAttacking: bool = false
 
@@ -64,6 +71,7 @@ var isAttacking: bool = false
 var is_downed: bool = false
 # combat_locked: true durante la cinematica della fatality, blocca input/fisica del player.
 var combat_locked: bool = false
+var intro_locked: bool = false
 # is_dead: true DOPO la fatality (quando "died" e' gia' stato emesso). A fine
 # cinematica combat_locked torna false per tutti (anche per la vittima, serve
 # per far ripartire l'altro player), ma senza questo flag il player a 0 HP
@@ -444,6 +452,10 @@ func _load_stats() -> void:
 	stamina_hit_gain = float(_stat("stats", "stamina_hit_gain", stamina_hit_gain))
 
 	hit_knockback = float(_stat("feedback", "hit_knockback", hit_knockback))
+	attack_knockback = float(_stat("feedback", "attack_knockback", attack_knockback))
+	_current_attack_animation = str(_stat("model", "attack_animation", "hit"))
+	attack_dash_speed = maxf(float(_stat("stats", "attack_dash_speed", 0.0)), 0.0)
+	attack_dash_duration = maxf(float(_stat("stats", "attack_dash_duration", 0.0)), 0.0)
 	hit_stun_duration = float(_stat("feedback", "hit_stun_duration", hit_stun_duration))
 	hit_flash_duration = float(_stat("feedback", "hit_flash_duration", hit_flash_duration))
 	hit_flash_color = _stat("feedback", "hit_flash_color", hit_flash_color)
@@ -588,6 +600,7 @@ func _ready() -> void:
 
 	# il player 2 parte specchiato: guarda a sinistra, verso il player 1
 	_set_facing(player_id == 1)
+	_was_on_floor = is_on_floor()
 
 	_setup_secondary_power()
 
@@ -771,6 +784,8 @@ func _update_charged_secondary(delta: float) -> void:
 		elif _secondary_hold_time >= secondary_power.charge_time() and is_on_floor() \
 				and not isAttacking and secondary_power.can_use():
 			_secondary_charging = secondary_power.start_charge()  # puo' fallire (es. stamina): si ritenta ogni frame
+		if _secondary_charging:
+			_play_power_trail()
 	else:
 		if _secondary_charging:
 			_secondary_charging = false
@@ -778,14 +793,107 @@ func _update_charged_secondary(delta: float) -> void:
 		elif _secondary_hold_time > 0.0 and is_on_floor() and not isAttacking \
 				and secondary_power.can_use():
 			secondary_power.use()  # pressione breve: attacco normale (sotto la soglia di carica)
+			_play_power_trail()
 		_secondary_hold_time = 0.0
 
 
+func intro_display_name() -> String:
+	match fighter_name.to_lower():
+		"trab": return "Trab"
+		"iacopo", "iacobisio": return "Iacobisio"
+		"naka", "nakakata", "maestro_nakakata": return "Maestro Nakakata"
+		"andrix": return "Andrix"
+	return str(_stat("character", "display_name", fighter_name))
+
+func intro_focus_offset() -> Vector2:
+	return Vector2(0.0, -get_visual_height() * 0.27)
+func intro_duration() -> float:
+	return maxf(float(_stat("cinematic", "intro_seconds", 1.1)), 0.2)
+func intro_zoom() -> float:
+	return clampf(float(_stat("cinematic", "intro_zoom", 3.0)), 1.2, 3.6)
+func play_intro_pose() -> void:
+	var anim := StringName(str(_stat("cinematic", "intro_animation", "hit")))
+	var frames: SpriteFrames = current_sprite.sprite_frames
+	if frames == null or not frames.has_animation(anim):
+		anim = &"taunt" if frames != null and frames.has_animation("taunt") else (&"hit" if frames != null and frames.has_animation("hit") else &"idle")
+	current_sprite.play(anim)
+	synced_animation = String(anim)
+func _spawn_afterimage(tint: Color) -> void:
+	var source: AnimatedSprite2D = chain_sprite if chain_sprite != null and chain_sprite.visible else current_sprite
+	if source == null or source.sprite_frames == null:
+		return
+	var ghost := Sprite2D.new()
+	ghost.texture = source.sprite_frames.get_frame_texture(source.animation, source.frame)
+	if ghost.texture == null:
+		return
+	ghost.flip_h = source.flip_h
+	ghost.scale = source.global_scale
+	ghost.modulate = tint
+	ghost.z_index = source.z_index - 1
+	get_tree().current_scene.add_child(ghost)
+	ghost.global_position = source.global_position - Vector2(get_facing_dir() * 9.0, 0.0)
+	var tw := ghost.create_tween()
+	tw.set_parallel(true)
+	tw.tween_property(ghost, "modulate:a", 0.0, 0.16)
+	tw.tween_property(ghost, "position:x", ghost.position.x - get_facing_dir() * 12.0, 0.16)
+	tw.chain().tween_callback(ghost.queue_free)
+func _play_attack_trail() -> void:
+	while isAttacking and is_inside_tree():
+		_spawn_afterimage(Color(0.55, 0.88, 1.0, 0.42))
+		await get_tree().create_timer(0.055).timeout
+func _play_power_trail() -> void:
+	for i in range(5):
+		if not is_inside_tree():
+			return
+		_spawn_afterimage(Color(0.82, 0.58, 1.0, 0.4))
+		await get_tree().create_timer(0.045).timeout
+func _spawn_burst(point: Vector2, tint: Color, count: int, speed_min: float, speed_max: float, life: float) -> void:
+	var p := CPUParticles2D.new()
+	p.one_shot = true
+	p.explosiveness = 1.0
+	p.amount = count
+	p.lifetime = life
+	p.local_coords = false
+	p.direction = Vector2(0.0, -0.35)
+	p.spread = 75.0
+	p.initial_velocity_min = speed_min
+	p.initial_velocity_max = speed_max
+	p.gravity = Vector2(0.0, 65.0)
+	p.scale_amount_min = 1.5
+	p.scale_amount_max = 4.0
+	p.color = tint
+	p.z_index = 14
+	var gr := Gradient.new()
+	gr.set_color(0, Color.WHITE)
+	gr.set_color(1, Color(1, 1, 1, 0))
+	p.color_ramp = gr
+	get_tree().current_scene.add_child(p)
+	p.global_position = point
+	p.restart()
+	get_tree().create_timer(life + 0.15).timeout.connect(p.queue_free)
+func _spawn_impact_sparks(blocked: bool) -> void:
+	var tint := Color(0.35, 0.85, 1.0, 1.0) if blocked else Color(1.0, 0.72, 0.2, 1.0)
+	_spawn_burst(hurtbox.global_position, tint, 7 if blocked else 14, 90.0 if blocked else 150.0, 230.0 if blocked else 360.0, 0.22)
+func _spawn_landing_dust() -> void:
+	_spawn_burst(global_position + Vector2(0, 26), Color(0.72, 0.68, 0.62, 0.55), 8, 20.0, 65.0, 0.28)
+	var rot := current_sprite.rotation
+	current_sprite.rotation -= 0.07
+	current_sprite.create_tween().tween_property(current_sprite, "rotation", rot, 0.16).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 func _physics_process(delta: float) -> void:
 	if Engine.get_physics_frames() % 30 == 0:
 		print("[DEBUG] ", name, " player_id=", player_id, " device_id=", device_id, " combat_locked=", combat_locked, " is_dead=", is_dead, " is_networked=", is_networked)
-	if combat_locked or is_dead:
-		return  # in corso una cinematica fatality (o gia' morto): niente input/fisica
+	if is_dead:
+		return
+	if intro_locked:
+		if is_networked and not is_multiplayer_authority():
+			return
+		if not is_on_floor():
+			velocity += get_gravity() * delta
+		velocity.x = 0.0
+		move_and_slide()
+		return
+	if combat_locked:
+		return  # fatality: blocca input e fisica
 	if is_networked:
 		if is_local:
 			_send_local_input()
@@ -831,6 +939,7 @@ func _physics_process(delta: float) -> void:
 	elif secondary_power != null and _secondary_just_pressed() and is_on_floor() \
 			and not isAttacking and secondary_power.can_use():
 		secondary_power.use()
+		_play_power_trail()
 	var power_busy: bool = _power_busy()
 
 	# blocco: tenendo "secondary" fermi, non si può attaccare né saltare
@@ -871,6 +980,10 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity.x = move_toward(velocity.x, 0, current_speed)
 
+	if _attack_dash_left > 0.0:
+		_attack_dash_left = maxf(_attack_dash_left - delta, 0.0)
+		velocity.x = get_facing_dir() * attack_dash_speed
+
 	if not isAttacking and not power_busy:
 		if direction:
 			if is_running:
@@ -883,14 +996,34 @@ func _physics_process(delta: float) -> void:
 			current_sprite.play("idle")
 			synced_animation = "idle"
 
+	if is_running and direction != 0.0:
+		_run_trail_clock -= delta
+		if _run_trail_clock <= 0.0:
+			_spawn_afterimage(Color(0.68, 0.84, 1.0, 0.24))
+			_run_trail_clock = 0.11
+	else:
+		_run_trail_clock = 0.0
 	move_and_slide()
+	var floor_now := is_on_floor()
+	if not _was_on_floor and floor_now:
+		_spawn_landing_dust()
+	_was_on_floor = floor_now
+	
+	
 
 
 func attack() -> void:
 	if isAttacking or is_dead:
 		return
+	var windup := maxf(float(_stat("cinematic", "attack_windup", 0.07)), 0.0)
+	if windup > 0.0:
+		current_sprite.rotation = -get_facing_dir() * 0.06
+		current_sprite.create_tween().tween_property(current_sprite, "rotation", 0.0, windup).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	isAttacking = true
-	synced_animation = "hit"
+	_attack_dash_left = attack_dash_duration
+	if current_sprite.sprite_frames == null or not current_sprite.sprite_frames.has_animation(_current_attack_animation):
+		_current_attack_animation = "hit"
+	synced_animation = _current_attack_animation
 
 	current_hitbox.reset_hits()
 	if attack_delay <= 0.0:
@@ -902,11 +1035,11 @@ func attack() -> void:
 		chain_sprite.visible = true
 		chain_sprite.play("hit")
 	else:
-		current_sprite.play("hit")
-
+		current_sprite.play(_current_attack_animation)
+	_play_attack_trail()
 
 func _on_animation_finished() -> void:
-	if current_sprite.animation == "hit":
+	if current_sprite.animation == _current_attack_animation:
 		isAttacking = false
 		hitbox_delay_left = 0.0
 		_set_hitbox_disabled(current_hitbox, true)
@@ -990,7 +1123,8 @@ func _play_hit_feedback(source: Node, blocked: bool) -> void:
 		var d: float = signf(global_position.x - source.global_position.x)
 		if d != 0.0:
 			push_dir = d
-		velocity.x = push_dir * hit_knockback * (0.4 if blocked else 1.0)
+		var shove_force: float = source.attack_knockback if source is Player else hit_knockback
+		velocity.x = push_dir * shove_force * (0.4 if blocked else 1.0)
 
 	if not blocked:
 		hurt_stun_left = hit_stun_duration
@@ -999,6 +1133,11 @@ func _play_hit_feedback(source: Node, blocked: bool) -> void:
 		_play_hurt_animation()
 
 	_flash_sprite()
+	_spawn_impact_sparks(blocked)
+	var camera := get_viewport().get_camera_2d()
+	if camera and camera.has_method("shake"):
+		camera.shake(3.0 if blocked else 7.0, 0.12 if blocked else 0.18)
+	_play_impact_squash(blocked)
 	_spawn_blood(push_dir, blocked)
 
 	if hit_sound:
@@ -1068,6 +1207,14 @@ func _spawn_blood(push_dir: float, blocked: bool) -> void:
 	p.global_position = hurtbox.global_position  # punto colpito (torace)
 	p.restart()
 	get_tree().create_timer(blood_lifetime + 0.2).timeout.connect(p.queue_free)
+
+
+func _play_impact_squash(blocked: bool) -> void:
+	var original_scale := current_sprite.scale
+	var factor := 1.04 if blocked else 1.12
+	var tween := create_tween()
+	tween.tween_property(current_sprite, "scale", original_scale * Vector2(factor, 1.0 / factor), 0.045)
+	tween.tween_property(current_sprite, "scale", original_scale, 0.11).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 
 func _flash_sprite() -> void:

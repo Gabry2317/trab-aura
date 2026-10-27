@@ -10,6 +10,7 @@ extends Node2D
 @onready var tommaso_btn: Button = $tommaso
 @onready var nakakata_btn: Button = $nakakata
 @onready var andrix_btn: Button = $andrix
+@onready var mencu_btn: Button = $mencu
 
 # 0 = trab, 1 = iacopo, 2 = naka
 const PREVIEW_TEXTURES := {
@@ -17,6 +18,7 @@ const PREVIEW_TEXTURES := {
 	1: preload("res://sprite/Player/proppick/IACOBISIO_bigprop.png"),
 	2: preload("res://sprite/Player/proppick/NAKAKATA_BIG_PRPO.png"),
 	3: preload("res://sprite/Player/proppick/andrix_bigprop.png"),
+	4: preload("res://sprite/Player/proppick/mencu_proppic.png"),
 }
 # scala per uniformare l'altezza delle 3 immagini (le sorgenti hanno dimensioni diverse)
 const PREVIEW_SCALE := {
@@ -24,6 +26,7 @@ const PREVIEW_SCALE := {
 	1: 1.2528716,
 	2: 0.45,
 	3: 0.4,
+	4: 0.14,
 }
 
 # ordine visivo sinistra -> destra dei personaggi selezionabili
@@ -43,6 +46,7 @@ func _ready() -> void:
 		{"skin": 0, "btn": tommaso_btn},
 		{"skin": 2, "btn": nakakata_btn},
 		{"skin": 3, "btn": andrix_btn},
+		{"skin": 4, "btn": mencu_btn},
 	]
 
 	# il mouse funziona SOLO quando è il turno del giocatore assegnato a tastiera
@@ -52,11 +56,13 @@ func _ready() -> void:
 	tommaso_btn.mouse_entered.connect(_hover_to.bind(1))
 	nakakata_btn.mouse_entered.connect(_hover_to.bind(2))
 	andrix_btn.mouse_entered.connect(_hover_to.bind(3))
+	mencu_btn.mouse_entered.connect(_hover_to.bind(4))
 
 	bisio_btn.pressed.connect(_click_to.bind(0))
 	tommaso_btn.pressed.connect(_click_to.bind(1))
 	nakakata_btn.pressed.connect(_click_to.bind(2))
 	andrix_btn.pressed.connect(_click_to.bind(3))
+	mencu_btn.pressed.connect(_click_to.bind(4))
 
 	GameState.selection_changed.connect(_refresh)
 	_refresh()
