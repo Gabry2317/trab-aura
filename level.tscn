@@ -11,6 +11,7 @@
 [ext_resource type="AudioStream" uid="uid://cvxc68pr2ya60" path="res://sound/Music/Seve me (A7X).mp3" id="7_n6hdu"]
 [ext_resource type="Script" uid="uid://def4douxfq3ly" path="res://SCRIPT/healt_bar.gd" id="8_healthbar"]
 [ext_resource type="Script" uid="uid://gupe7veoh058" path="res://SCRIPT/stamina_bar.gd" id="9_staminabar"]
+[ext_resource type="Script" path="res://SCRIPT/cooldown_bar.gd" id="11_cooldownbar"]
 [ext_resource type="FontFile" uid="uid://fwsspbqoxsdm" path="res://font/kreaturekombatcond.ttf" id="10_font"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_i2t4f"]
@@ -11693,6 +11694,12 @@ corner_radius_top_right = 3
 corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cooldown_bg"]
+bg_color = Color(1, 1, 1, 0.16)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cooldown_fill"]
+bg_color = Color(1, 1, 1, 1)
+
 [node name="level" type="Node" unique_id=2141253370]
 script = ExtResource("1_oi3di")
 
@@ -11869,6 +11876,38 @@ value = 100.0
 fill_mode = 1
 show_percentage = false
 script = ExtResource("9_staminabar")
+player_id = 1
+
+[node name="BarraRicaricaP1" type="ProgressBar" parent="HUD"]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -340.0
+offset_top = 73.0
+offset_right = -90.0
+offset_bottom = 77.0
+grow_horizontal = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_cooldown_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_cooldown_fill")
+value = 5.0
+show_percentage = false
+script = ExtResource("11_cooldownbar")
+
+[node name="BarraRicaricaP2" type="ProgressBar" parent="HUD"]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = 90.0
+offset_top = 73.0
+offset_right = 340.0
+offset_bottom = 77.0
+grow_horizontal = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_cooldown_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_cooldown_fill")
+value = 5.0
+fill_mode = 1
+show_percentage = false
+script = ExtResource("11_cooldownbar")
 player_id = 1
 
 [node name="FinePartita" parent="." unique_id=348708548 instance=ExtResource("7_km5ld")]

@@ -14,7 +14,7 @@ var _busy: bool = false               # true durante lo spawn: il player resta f
 func default_params() -> Dictionary:
 	return {
 		"damage": 15,                 # danno alla catena quando colpisce
-		"cooldown": 1.5,              # secondi tra un lancio e il successivo
+		"cooldown": 5.0,              # secondi tra un lancio e il successivo
 		"stamina_min": 25.0,          # stamina minima per poter lanciare la catena
 		"stamina_cost": 25.0,         # stamina consumata a ogni lancio
 		"sheet": "res://sprite/Player/Iacobisio/Secondary/chains.png",

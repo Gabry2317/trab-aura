@@ -80,6 +80,7 @@ var intro_locked: bool = false
 # is_dead=true il player resta fermo nella posa finale, qualunque cosa
 # level.gd faccia e in qualunque momento lo faccia.
 var is_dead: bool = false
+var frozen_time_left: float = 0.0  # secondi di immobilita' forzata da un potere
 var hitbox_delay_left: float = 0.0  # secondi che mancano all'attivazione della hitbox
 var hurt_stun_left: float = 0.0  # secondi di stordimento rimanenti dopo un colpo subito
 var is_blocking: bool = false  # true mentre il player tiene premuto il tasto "secondary"
@@ -433,6 +434,7 @@ func _load_stats() -> void:
 	is_downed = false
 	combat_locked = false
 	is_dead = false
+	frozen_time_left = 0.0
 	FatalityManager.clear_downed(player_id)
 
 	max_health = int(_stat("stats", "max_health", max_health))
@@ -532,6 +534,11 @@ func gain_stamina(amount: float) -> void:
 
 func spend_stamina(amount: float) -> void:
 	gain_stamina(-amount)
+
+
+func freeze_for(seconds: float) -> void:
+	frozen_time_left = maxf(frozen_time_left, seconds)
+	_cancel_attack()
 
 
 # Altezza visibile del personaggio in pixel di mondo (serve ai poteri per scalarsi)
@@ -899,6 +906,16 @@ func _physics_process(delta: float) -> void:
 			_send_local_input()
 		if not is_multiplayer_authority():
 			return  # il client non simula: aspetta la posizione sincronizzata dall'host
+
+	if frozen_time_left > 0.0:
+		frozen_time_left = maxf(frozen_time_left - delta, 0.0)
+		velocity = Vector2.ZERO
+		is_blocking = false
+		is_reloading = false
+		if current_sprite.sprite_frames.has_animation("idle"):
+			current_sprite.play("idle")
+			synced_animation = "idle"
+		return
 
 	if not is_on_floor():
 		velocity += get_gravity() * delta
