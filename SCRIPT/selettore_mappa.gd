@@ -93,14 +93,15 @@ func _unhandled_input(event: InputEvent) -> void:
 		_input_tastiera(event, ass.mappa)
 
 
-func _input_tastiera(event: InputEvent, mappa: Dictionary) -> void:
+func _input_tastiera(event: InputEvent, _mappa: Dictionary) -> void:
 	if not (event is InputEventKey) or not event.pressed or event.echo:
 		return
-	if event.keycode == mappa.sinistra:
+	var prefisso: String = "p1_" if _voti.size() == 0 else "p2_"
+	if event.is_action_pressed(prefisso + "left"):
 		_muovi(-1)
-	elif event.keycode == mappa.destra:
+	elif event.is_action_pressed(prefisso + "right"):
 		_muovi(1)
-	elif event.keycode == KEY_KP_0:
+	elif event.is_action_pressed(prefisso + "attack"):
 		_conferma()
 
 

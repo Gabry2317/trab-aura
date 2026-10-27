@@ -85,9 +85,9 @@ func descrizione_dispositivi() -> String:
 	var n := numero_controller()
 	match n:
 		0:
-			return "Nessun controller rilevato: potete giocare entrambi da tastiera (WASD / Frecce)."
+			return "P1: A/D muove, Spazio salta, Shift corre, J attacca/conferma, K potere/blocco, E ricarica.\nP2: Frecce muovono, Su salta, KP0 corre, KP1 attacca/conferma, KP2 potere/blocco, KP Invio ricarica."
 		1:
-			return "Rilevato 1 controller: puoi giocare con tastiera + controller."
+			return "P1: A/D muove, Spazio salta, Shift corre, J attacca/conferma, K potere/blocco, E ricarica. P2 usa il controller."
 		_:
 			return "Rilevati %d controller: potete giocare in doppio controller." % n
 

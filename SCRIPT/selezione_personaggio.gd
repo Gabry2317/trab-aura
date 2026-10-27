@@ -26,7 +26,7 @@ const PREVIEW_SCALE := {
 	1: 1.2528716,
 	2: 0.45,
 	3: 0.4,
-	4: 0.14,
+	4: 0.4,
 }
 
 # ordine visivo sinistra -> destra dei personaggi selezionabili
@@ -82,15 +82,15 @@ func _unhandled_input(event: InputEvent) -> void:
 		_gestisci_tastiera(event, assegnazione)
 
 
-func _gestisci_tastiera(event: InputEvent, assegnazione: Dictionary) -> void:
+func _gestisci_tastiera(event: InputEvent, _assegnazione: Dictionary) -> void:
 	if not (event is InputEventKey) or not event.pressed or event.echo:
 		return
-	var mappa: Dictionary = assegnazione.mappa
-	if event.keycode == mappa.sinistra:
+	var prefisso: String = "p1_" if GameState.selecting_player == 0 else "p2_"
+	if event.is_action_pressed(prefisso + "left"):
 		_muovi(-1)
-	elif event.keycode == mappa.destra:
+	elif event.is_action_pressed(prefisso + "right"):
 		_muovi(1)
-	elif event.keycode == KEY_KP_0:
+	elif event.is_action_pressed(prefisso + "attack"):
 		_conferma()
 
 

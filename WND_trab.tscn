@@ -114,6 +114,7 @@
 [ext_resource type="Texture2D" uid="uid://yb7uf4hboodw" path="res://sprite/Player/Andrix/idle/andrix-idle-trimmed.png" id="134_q0umt"]
 [ext_resource type="Texture2D" uid="uid://jc2nibe2wyo4" path="res://sprite/Player/Andrix/run/andrix-run-trimmed.png" id="135_kup7x"]
 [ext_resource type="Texture2D" uid="uid://dccnr7qwai8ha" path="res://sprite/Player/Andrix/walk/andrix-walk-trimmed.png" id="136_hwvvw"]
+[ext_resource type="SpriteFrames" path="res://sprite/Player/IlMencu/Mencu_SpriteFrames.tres" id="mencu_frames"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fdm2o"]
 size = Vector2(53, 165)
@@ -2623,7 +2624,6 @@ shape = SubResource("RectangleShape2D_d5qys")
 disabled = true
 
 [node name="andrix_Sprite" type="AnimatedSprite2D" parent="." unique_id=510414712]
-visible = false
 position = Vector2(-2.842171e-14, -4)
 scale = Vector2(1.201172, 1.1110841)
 sprite_frames = SubResource("SpriteFrames_u840f")
@@ -2635,6 +2635,21 @@ script = ExtResource("78_fdapt")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="andrix_Sprite/PunchHitbox" unique_id=1578298769]
 position = Vector2(55.970005, -39.000004)
+shape = SubResource("RectangleShape2D_d5qys")
+disabled = true
+
+[node name="Mencu_Sprite" type="AnimatedSprite2D" parent="." unique_id=986100001]
+position = Vector2(-2, 7)
+scale = Vector2(1.1679688, 1.1679688)
+sprite_frames = ExtResource("mencu_frames")
+animation = &"idle"
+autoplay = "idle"
+
+[node name="PunchHitbox" type="Area2D" parent="Mencu_Sprite" unique_id=986100002]
+script = ExtResource("78_fdapt")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Mencu_Sprite/PunchHitbox" unique_id=986100003]
+position = Vector2(56, -42)
 shape = SubResource("RectangleShape2D_d5qys")
 disabled = true
 

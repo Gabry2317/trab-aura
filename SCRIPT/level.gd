@@ -170,6 +170,8 @@ func _play_fight_intro() -> void:
 	_intro_running = false
 
 func _setup_ambient_effects() -> void:
+	if not GameState.visual_effects:
+		return
 	var embers := _ambient_theme == "hell"
 	var p := CPUParticles2D.new()
 	p.name = "AmbientEmbers" if embers else "AmbientDust"
@@ -199,7 +201,7 @@ func _show_ko(winner_id: int) -> void:
 	var camera := get_viewport().get_camera_2d()
 	if camera and camera.has_method("set_cinematic_focus") and players_per_id.has(winner_id):
 		camera.set_cinematic_focus(players_per_id[winner_id], 1.55)
-	if camera and camera.has_method("shake"):
+	if GameState.visual_effects and camera and camera.has_method("shake"):
 		camera.shake(10.0, 0.3)
 	var layer := CanvasLayer.new()
 	layer.layer = 31

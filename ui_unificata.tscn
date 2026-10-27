@@ -10,17 +10,15 @@
 [ext_resource type="Texture2D" uid="uid://drocuhbd43aky" path="res://sprite/Player/proppick/WND_trab_bigprop.png" id="4_evl8s"]
 [ext_resource type="Texture2D" uid="uid://bugoywwy8red0" path="res://sprite/Player/proppick/IACOBISIO_bigprop.png" id="5_r7y7g"]
 [ext_resource type="FontFile" uid="uid://fwsspbqoxsdm" path="res://font/kreaturekombatcond.ttf" id="6_font"]
-[ext_resource type="Script" uid="uid://c54ciwtoeq5yx" path="res://SCRIPT/personaggio1.gd" id="7_1yirc"]
+[ext_resource type="Script" uid="uid://qwrvw7oyc14c" path="res://SCRIPT/personaggio1.gd" id="7_1yirc"]
 [ext_resource type="Texture2D" uid="uid://cb41iujp3xxr3" path="res://sprite/UI/menu.png" id="7_ecwwl"]
 [ext_resource type="AudioStream" uid="uid://63d70sp7l5ha" path="res://sound/Music/Should of Saw It (Bloodhound Lil Jeff).mp3" id="8_kk3ma"]
 [ext_resource type="Texture2D" uid="uid://x1muolexu8aa" path="res://sprite/Player/proppick/andrix.png" id="9_3fld7"]
 [ext_resource type="Texture2D" uid="uid://dafk75umfnxap" path="res://sprite/Player/proppick/NAKAKATA.png" id="9_naka1"]
 [ext_resource type="Script" uid="uid://ctm85w7f68p35" path="res://SCRIPT/ui_manager.gd" id="10_uimgr"]
 [ext_resource type="Script" uid="uid://bgg5o5d1c1iya" path="res://SCRIPT/pannello_selezione_controlli.gd" id="11_ctrl"]
-
-[ext_resource type="Script" path="res://SCRIPT/selettore_mappa.gd" id="12_map"]
-[ext_resource type="Texture2D" path="res://sprite/Player/proppick/mencu_icon.png" id="13_mencu"]
-[ext_resource type="Texture2D" path="res://sprite/Player/proppick/mencu_proppic.png" id="14_mencu_prop"]
+[ext_resource type="Script" uid="uid://dcutgy4hnd7wl" path="res://SCRIPT/selettore_mappa.gd" id="12_map"]
+[ext_resource type="Texture2D" uid="uid://ee0f27to8713" path="res://sprite/Player/proppick/mencu_icon.png" id="13_mencu"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hover"]
 bg_color = Color(0.65098, 0.098039, 0.117647, 0.85)
@@ -289,10 +287,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -240.0
-offset_top = -170.0
-offset_right = 240.0
-offset_bottom = 170.0
+offset_left = -460.0
+offset_top = -330.0
+offset_right = 460.0
+offset_bottom = 330.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
@@ -302,13 +300,13 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 24.0
-offset_top = 20.0
-offset_right = -24.0
-offset_bottom = -20.0
+offset_left = 22.0
+offset_top = 14.0
+offset_right = -22.0
+offset_bottom = -14.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 22
+theme_override_constants/separation = 8
 
 [node name="Titolo" type="Label" parent="Impostazioni/Pannello/Contenitore" unique_id=410019140]
 layout_mode = 2
@@ -340,6 +338,55 @@ layout_mode = 2
 theme_override_fonts/font = ExtResource("6_font")
 text = "Schermo intero"
 
+[node name="LabelVideoHint" type="Label" parent="Impostazioni/Pannello/Contenitore" unique_id=178201313]
+layout_mode = 2
+autowrap_mode = 2
+text = "Risoluzione e schermo intero si applicano avviando il gioco fuori dall'editor."
+
+[node name="RigaRisoluzione" type="HBoxContainer" parent="Impostazioni/Pannello/Contenitore" unique_id=178201303]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="LabelRisoluzione" type="Label" parent="Impostazioni/Pannello/Contenitore/RigaRisoluzione" unique_id=178201304]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Risoluzione finestra"
+
+[node name="Risoluzione" type="OptionButton" parent="Impostazioni/Pannello/Contenitore/RigaRisoluzione" unique_id=178201305]
+custom_minimum_size = Vector2(220, 38)
+layout_mode = 2
+
+[node name="CheckEffetti" type="CheckButton" parent="Impostazioni/Pannello/Contenitore" unique_id=178201306]
+layout_mode = 2
+text = "Effetti visivi e scosse camera"
+
+[node name="CheckGore" type="CheckButton" parent="Impostazioni/Pannello/Contenitore" unique_id=178201307]
+layout_mode = 2
+text = "Sangue e gore"
+
+[node name="LabelTasti" type="Label" parent="Impostazioni/Pannello/Contenitore" unique_id=178201308]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.94902, 0.784314, 0.184314, 1)
+text = "Comandi tastiera - clicca un tasto e premi il nuovo comando (Esc annulla)"
+
+[node name="ResetTasti" type="Button" parent="Impostazioni/Pannello/Contenitore" unique_id=178201312]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+text = "Ripristina tasti predefiniti"
+
+[node name="ScrollTasti" type="ScrollContainer" parent="Impostazioni/Pannello/Contenitore" unique_id=178201309]
+custom_minimum_size = Vector2(0, 205)
+size_flags_vertical = 3
+layout_mode = 2
+
+[node name="ElencoTasti" type="VBoxContainer" parent="Impostazioni/Pannello/Contenitore/ScrollTasti" unique_id=178201310]
+size_flags_horizontal = 3
+
+[node name="LabelController" type="Label" parent="Impostazioni/Pannello/Contenitore" unique_id=178201311]
+layout_mode = 2
+autowrap_mode = 2
+text = "Controller: A salta, X/R1 attacca, B potere/blocco, L1 corre, Y ricarica"
+
 [node name="Indietro" type="Button" parent="Impostazioni/Pannello/Contenitore" unique_id=802987556]
 custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
@@ -347,7 +394,6 @@ theme = SubResource("Theme_menu")
 text = "Indietro"
 
 [node name="SelezionePersonaggio" type="Node2D" parent="." unique_id=764590530]
-visible = false
 script = ExtResource("1_mlc5f")
 
 [node name="CharacterSelectionGenderV0T5Ikpt1Sj45g1" type="Sprite2D" parent="SelezionePersonaggio" unique_id=1430094592]
@@ -427,17 +473,17 @@ flat = true
 script = ExtResource("7_1yirc")
 skin_id = 3
 
-[node name="MencuSprite" type="Sprite2D" parent="SelezionePersonaggio"]
+[node name="MencuSprite" type="Sprite2D" parent="SelezionePersonaggio" unique_id=1164692248]
 z_index = -1
-position = Vector2(348, 470)
-scale = Vector2(0.12, 0.12)
+position = Vector2(350.5, 490)
+scale = Vector2(0.15071769, 0.1451356)
 texture = ExtResource("13_mencu")
 
-[node name="mencu" type="Button" parent="SelezionePersonaggio"]
-offset_left = 265.0
-offset_top = 390.0
-offset_right = 441.0
-offset_bottom = 550.0
+[node name="mencu" type="Button" parent="SelezionePersonaggio" unique_id=1500017180]
+offset_left = 263.0
+offset_top = 401.0
+offset_right = 439.0
+offset_bottom = 573.0
 focus_mode = 0
 flat = true
 script = ExtResource("7_1yirc")
@@ -472,6 +518,7 @@ theme_override_font_sizes/font_size = 22
 text = "Indietro"
 
 [node name="SelezioneControlli" type="Control" parent="." unique_id=2001387144]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

@@ -8,10 +8,22 @@ signal selection_finished
 
 const PLAYER_COUNT: int = 2
 
-# --- Impostazioni (volume / schermo intero), salvate su disco ---
+# --- Impostazioni di gioco salvate su disco ---
 const SETTINGS_PATH: String = "user://settings.cfg"
 var master_volume: float = 1.0  # 0.0 - 1.0
 var fullscreen: bool = false
+var window_resolution: Vector2i = Vector2i(1280, 720)
+var visual_effects: bool = true
+var gore_enabled: bool = true
+const DEFAULT_KEY_BINDINGS := {
+	"p1_left": KEY_A, "p1_right": KEY_D, "p1_down": KEY_S,
+	"p1_jump": KEY_SPACE, "p1_run": KEY_SHIFT, "p1_attack": KEY_J,
+	"p1_secondary": KEY_K, "p1_reload": KEY_E,
+	"p2_left": KEY_LEFT, "p2_right": KEY_RIGHT, "p2_down": KEY_DOWN,
+	"p2_jump": KEY_UP, "p2_run": KEY_KP_0, "p2_attack": KEY_KP_1,
+	"p2_secondary": KEY_KP_2, "p2_reload": KEY_KP_ENTER,
+}
+var key_bindings: Dictionary = DEFAULT_KEY_BINDINGS.duplicate()
 
 
 func _ready() -> void:
@@ -24,12 +36,26 @@ func _load_settings() -> void:
 	if cfg.load(SETTINGS_PATH) == OK:
 		master_volume = cfg.get_value("audio", "master_volume", 1.0)
 		fullscreen = cfg.get_value("display", "fullscreen", false)
+		window_resolution = Vector2i(
+			int(cfg.get_value("display", "window_width", 1280)),
+			int(cfg.get_value("display", "window_height", 720))
+		)
+		visual_effects = cfg.get_value("graphics", "visual_effects", true)
+		gore_enabled = cfg.get_value("graphics", "gore_enabled", true)
+		for action in DEFAULT_KEY_BINDINGS:
+			key_bindings[action] = int(cfg.get_value("controls", action, DEFAULT_KEY_BINDINGS[action]))
 
 
 func save_settings() -> void:
 	var cfg := ConfigFile.new()
 	cfg.set_value("audio", "master_volume", master_volume)
 	cfg.set_value("display", "fullscreen", fullscreen)
+	cfg.set_value("display", "window_width", window_resolution.x)
+	cfg.set_value("display", "window_height", window_resolution.y)
+	cfg.set_value("graphics", "visual_effects", visual_effects)
+	cfg.set_value("graphics", "gore_enabled", gore_enabled)
+	for action in key_bindings:
+		cfg.set_value("controls", action, key_bindings[action])
 	cfg.save(SETTINGS_PATH)
 
 
@@ -37,9 +63,13 @@ func _apply_settings() -> void:
 	var bus_index: int = AudioServer.get_bus_index("Master")
 	if bus_index != -1:
 		AudioServer.set_bus_volume_db(bus_index, linear_to_db(clampf(master_volume, 0.0, 1.0)))
-	DisplayServer.window_set_mode(
-		DisplayServer.WINDOW_MODE_FULLSCREEN if fullscreen else DisplayServer.WINDOW_MODE_WINDOWED
-	)
+	if not Engine.is_embedded_in_editor():
+		DisplayServer.window_set_mode(
+			DisplayServer.WINDOW_MODE_FULLSCREEN if fullscreen else DisplayServer.WINDOW_MODE_WINDOWED
+		)
+		if not fullscreen:
+			DisplayServer.window_set_size(window_resolution)
+	_apply_key_bindings()
 
 
 func set_master_volume(value: float) -> void:
@@ -52,10 +82,64 @@ func set_master_volume(value: float) -> void:
 
 func set_fullscreen(value: bool) -> void:
 	fullscreen = value
-	DisplayServer.window_set_mode(
-		DisplayServer.WINDOW_MODE_FULLSCREEN if fullscreen else DisplayServer.WINDOW_MODE_WINDOWED
-	)
+	if not Engine.is_embedded_in_editor():
+		DisplayServer.window_set_mode(
+			DisplayServer.WINDOW_MODE_FULLSCREEN if fullscreen else DisplayServer.WINDOW_MODE_WINDOWED
+		)
+		if not fullscreen:
+			DisplayServer.window_set_size(window_resolution)
 	save_settings()
+
+
+func set_window_resolution(value: Vector2i) -> void:
+	window_resolution = value
+	if not fullscreen and not Engine.is_embedded_in_editor():
+		DisplayServer.window_set_size(window_resolution)
+	save_settings()
+
+
+func set_visual_effects(value: bool) -> void:
+	visual_effects = value
+	save_settings()
+
+
+func set_gore_enabled(value: bool) -> void:
+	gore_enabled = value
+	save_settings()
+
+
+func set_key_binding(action: String, physical_keycode: int) -> bool:
+	if not DEFAULT_KEY_BINDINGS.has(action) or physical_keycode <= 0:
+		return false
+	for other_action in key_bindings:
+		if other_action != action and int(key_bindings[other_action]) == physical_keycode:
+			return false
+	key_bindings[action] = physical_keycode
+	_apply_key_bindings()
+	save_settings()
+	return true
+
+
+func reset_key_bindings() -> void:
+	key_bindings = DEFAULT_KEY_BINDINGS.duplicate()
+	_apply_key_bindings()
+	save_settings()
+
+
+func key_name(action: String) -> String:
+	var event := InputEventKey.new()
+	event.physical_keycode = int(key_bindings.get(action, DEFAULT_KEY_BINDINGS.get(action, KEY_NONE)))
+	return event.as_text_physical_keycode()
+
+
+func _apply_key_bindings() -> void:
+	for action in key_bindings:
+		if not InputMap.has_action(action):
+			InputMap.add_action(action)
+		InputMap.action_erase_events(action)
+		var event := InputEventKey.new()
+		event.physical_keycode = int(key_bindings[action])
+		InputMap.action_add_event(action, event)
 
 # Configurazione multiplayer: una entry per player, letta da player.gd tramite player_id
 # device_id: -1 = tastiera P1, -2 = tastiera P2, >=0 = indice pad

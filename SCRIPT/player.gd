@@ -713,7 +713,7 @@ func _attack_just_pressed() -> bool:
 				or Input.is_joy_button_pressed(device_id, JOY_BUTTON_X)
 
 
-# pressione singola del tasto "secondary" (tasto destro / p1_secondary,
+# pressione singola del tasto "secondary" (K per P1 / tastierino 2 per P2,
 # p2_secondary): usata per lanciare il potere secondario, a
 # differenza di _block_pressed() che invece lo legge "tenuto premuto"
 func _secondary_just_pressed() -> bool:
@@ -728,16 +728,16 @@ func _secondary_just_pressed() -> bool:
 			return false  # non ancora supportato da joypad
 
 
-# ricarica stamina: tenere premuto E (tastiera P1 / rete) o Triangolo (JOY_BUTTON_Y)
-# sul pad. Tastiera P2: Invio (le frecce sono gia' prese).
+# ricarica stamina: tenere premuto E (P1/rete), Invio numerico (P2) o Triangolo
+# (JOY_BUTTON_Y) sul pad.
 func _reload_pressed() -> bool:
 	if is_networked:
-		return (Input.is_physical_key_pressed(KEY_E) or _any_pad_triangle()) if is_local else bool(_remote_input.get("reload", false))
+		return (Input.is_action_pressed("p1_reload") or _any_pad_triangle()) if is_local else bool(_remote_input.get("reload", false))
 	match device_id:
 		-1:
-			return Input.is_physical_key_pressed(KEY_E)
+			return Input.is_action_pressed("p1_reload")
 		-2:
-			return Input.is_physical_key_pressed(KEY_ENTER)
+			return Input.is_action_pressed("p2_reload")
 		_:
 			return Input.is_joy_button_pressed(device_id, JOY_BUTTON_Y)
 
@@ -828,6 +828,8 @@ func play_intro_pose() -> void:
 	current_sprite.play(anim)
 	synced_animation = String(anim)
 func _spawn_afterimage(tint: Color) -> void:
+	if not GameState.visual_effects:
+		return
 	var source: AnimatedSprite2D = chain_sprite if chain_sprite != null and chain_sprite.visible else current_sprite
 	if source == null or source.sprite_frames == null:
 		return
@@ -848,11 +850,13 @@ func _spawn_afterimage(tint: Color) -> void:
 	tw.chain().tween_callback(ghost.queue_free)
 func _play_attack_trail() -> void:
 	while isAttacking and is_inside_tree():
+		if not GameState.visual_effects:
+			return
 		_spawn_afterimage(Color(0.55, 0.88, 1.0, 0.42))
 		await get_tree().create_timer(0.055).timeout
 func _play_power_trail() -> void:
 	for i in range(5):
-		if not is_inside_tree():
+		if not is_inside_tree() or not GameState.visual_effects:
 			return
 		_spawn_afterimage(Color(0.82, 0.58, 1.0, 0.4))
 		await get_tree().create_timer(0.045).timeout
@@ -881,9 +885,13 @@ func _spawn_burst(point: Vector2, tint: Color, count: int, speed_min: float, spe
 	p.restart()
 	get_tree().create_timer(life + 0.15).timeout.connect(p.queue_free)
 func _spawn_impact_sparks(blocked: bool) -> void:
+	if not GameState.visual_effects:
+		return
 	var tint := Color(0.35, 0.85, 1.0, 1.0) if blocked else Color(1.0, 0.72, 0.2, 1.0)
 	_spawn_burst(hurtbox.global_position, tint, 7 if blocked else 14, 90.0 if blocked else 150.0, 230.0 if blocked else 360.0, 0.22)
 func _spawn_landing_dust() -> void:
+	if not GameState.visual_effects:
+		return
 	_spawn_burst(global_position + Vector2(0, 26), Color(0.72, 0.68, 0.62, 0.55), 8, 20.0, 65.0, 0.28)
 	var rot := current_sprite.rotation
 	current_sprite.rotation -= 0.07
@@ -1151,12 +1159,14 @@ func _play_hit_feedback(source: Node, blocked: bool) -> void:
 		_cancel_attack()  # il colpo subito interrompe il pugno in corso
 		_play_hurt_animation()
 
-	_flash_sprite()
+	if GameState.visual_effects:
+		_flash_sprite()
 	_spawn_impact_sparks(blocked)
 	var camera := get_viewport().get_camera_2d()
-	if camera and camera.has_method("shake"):
+	if GameState.visual_effects and camera and camera.has_method("shake"):
 		camera.shake(3.0 if blocked else 7.0, 0.12 if blocked else 0.18)
-	_play_impact_squash(blocked)
+	if GameState.visual_effects:
+		_play_impact_squash(blocked)
 	_spawn_blood(push_dir, blocked)
 
 	if hit_sound:
@@ -1196,7 +1206,7 @@ func _play_hurt_animation() -> void:
 # Schizzi di sangue: particelle rosse che partono dal punto colpito, spinte via
 # da chi ha colpito e poi cadono per gravita'. Bloccando ne escono meno.
 func _spawn_blood(push_dir: float, blocked: bool) -> void:
-	if blood_amount <= 0:
+	if not GameState.gore_enabled or blood_amount <= 0:
 		return
 	var amount: int = maxi(int(round(blood_amount * (0.3 if blocked else 1.0))), 1)
 

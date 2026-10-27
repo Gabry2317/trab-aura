@@ -18,7 +18,7 @@ const COLORE_ORO := Color(0.94902, 0.784314, 0.184314)
 const TESTO_BASE := {
 	"doppio": "Doppio controller",
 	"misto": "Tastiera + controller",
-	"tastiera": "Doppia tastiera (WASD / Frecce)",
+	"tastiera": "Doppia tastiera: WASD + J/K, Frecce + tastierino",
 }
 
 var _controlli: Controlli

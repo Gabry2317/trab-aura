@@ -414,12 +414,10 @@ func _run_sequence(killer: Node, victim: Player, via_combo: bool) -> void:
 		for p in get_tree().get_nodes_in_group("players"):
 			p.combat_locked = true
 
-	if not via_combo:
+	if not via_combo or not GameState.gore_enabled:
 		# Finito con un colpo QUALSIASI (settings.any_hit_finishes), non con
-		# la combo specifica: niente scenografia (camera/slowmo/letterbox) e
-		# niente animazione unica "<vittima>_<killer>" -- quella e' la vera
-		# "fatality" ed e' riservata a chi fa la combo giusta. Qui e' solo un
-		# K.O. normale: una breve pausa e via.
+		# la combo specifica, oppure gore disattivato: niente scenografia e
+		# animazioni fatality. In entrambi i casi resta un K.O. normale.
 		if settings.fallback_freeze_duration > 0.0:
 			await get_tree().create_timer(settings.fallback_freeze_duration, true, false, true).timeout
 		for p in get_tree().get_nodes_in_group("players"):
