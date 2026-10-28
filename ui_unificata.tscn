@@ -19,6 +19,7 @@
 [ext_resource type="Script" uid="uid://bgg5o5d1c1iya" path="res://SCRIPT/pannello_selezione_controlli.gd" id="11_ctrl"]
 [ext_resource type="Script" uid="uid://dcutgy4hnd7wl" path="res://SCRIPT/selettore_mappa.gd" id="12_map"]
 [ext_resource type="Texture2D" uid="uid://ee0f27to8713" path="res://sprite/Player/proppick/mencu_icon.png" id="13_mencu"]
+[ext_resource type="Texture2D" path="res://sprite/Player/proppick/perucx_preview.png" id="14_perucx"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hover"]
 bg_color = Color(0.65098, 0.098039, 0.117647, 0.85)
@@ -488,6 +489,22 @@ focus_mode = 0
 flat = true
 script = ExtResource("7_1yirc")
 skin_id = 4
+
+[node name="PerucxSprite" type="Sprite2D" parent="SelezionePersonaggio"]
+z_index = -1
+position = Vector2(545, 490)
+scale = Vector2(0.45, 0.45)
+texture = ExtResource("14_perucx")
+
+[node name="perucx" type="Button" parent="SelezionePersonaggio"]
+offset_left = 456.0
+offset_top = 401.0
+offset_right = 632.0
+offset_bottom = 573.0
+focus_mode = 0
+flat = true
+script = ExtResource("7_1yirc")
+skin_id = 5
 
 [node name="Label" type="Label" parent="SelezionePersonaggio" unique_id=1108000319]
 offset_left = 268.0
